@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"
+        android:orientation="vertical">
+    <com.tranzzo.android.sdk.view.CardNumberEditText
+            android:id="@+id/etCardNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/card_number_hint"
+            android:nextFocusRight="@+id/etExpiration"
+            android:nextFocusForward="@+id/etExpiration"
+            android:nextFocusDown="@+id/etExpiration"
+            tools:ignore="UnusedAttribute"
+            tools:importantForAccessibility="yes"
+            android:accessibilityTraversalBefore="@+id/etExpiration"
+            android:imeOptions="actionNext"
+            android:inputType="number"
+            android:maxLength="19"
+            android:layout_gravity="left"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:visibility="visible"
+
+    />
+    <com.tranzzo.android.sdk.view.ExpiryDateEditText
+            android:id="@+id/etExpiration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/expiry_date_hint"
+            tools:ignore="UnusedAttribute"
+            tools:importantForAccessibility="yes"
+            android:accessibilityTraversalAfter="@+id/etExpiration"
+            android:accessibilityTraversalBefore="@id/etCardNumber"
+            android:nextFocusRight="@+id/etCVV"
+            android:nextFocusForward="@+id/etCVV"
+            android:nextFocusDown="@+id/etCVV"
+            android:nextFocusLeft="@id/etCardNumber"
+            android:nextFocusUp="@id/etCardNumber"
+            android:imeOptions="actionNext"
+            android:inputType="date"
+            android:maxLength="5"
+            android:visibility="visible"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_gravity="left"
+    />
+    <com.tranzzo.android.sdk.view.TranzzoEditText
+            android:id="@+id/etCVV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:ignore="UnusedAttribute"
+            tools:importantForAccessibility="yes"
+            android:accessibilityTraversalAfter="@+id/etExpiration"
+            android:nextFocusLeft="@id/etExpiration"
+            android:nextFocusUp="@id/etExpiration"
+            android:background="@android:color/transparent"
+            android:hint="@string/cvc_number_hint"
+            android:imeOptions="actionDone"
+            android:inputType="numberPassword"
+            android:maxLength="4"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_gravity="left"
+    />
+    <com.google.android.material.button.MaterialButton
+            android:text="TOKENIZE"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/btnTokenize"
+    />
+
+    <!--btnFillDefault-->
+    <!--btnFillWrong-->
+    <!--btnClearInputs-->
+
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <com.google.android.material.button.MaterialButton
+                android:text="FILL DEFAULT"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnFillDefault"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp" android:layout_marginRight="10dp"/>
+        <com.google.android.material.button.MaterialButton
+                android:text="FILL WRONG"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnFillWrong"
+                android:layout_marginEnd="10dp" android:layout_marginRight="10dp"
+                android:layout_weight="1"/>
+        <com.google.android.material.button.MaterialButton
+                android:text="CLEAR"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnClearInputs"
+                android:layout_weight="1"/>
+    </LinearLayout>
+    <TextView
+            android:text="Result will be displayed here"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvResult"
+            android:textSize="18sp"
+            tools:text="Result will be here"/>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
