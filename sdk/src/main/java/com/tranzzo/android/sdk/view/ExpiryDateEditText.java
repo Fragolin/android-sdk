@@ -13,38 +13,38 @@ import com.tranzzo.android.sdk.R;
  * An {@link EditText} that handles putting numbers around a central divider character.
  */
 public class ExpiryDateEditText extends TranzzoEditText {
-
+    
     static final int INVALID_INPUT = -1;
     private static final int MAX_INPUT_LENGTH = 5;
-
+    
     private ExpiryDateEditListener mExpiryDateEditListener;
     private boolean mIsDateValid;
-
+    
     public ExpiryDateEditText(Context context) {
         super(context);
         listenForTextChanges();
     }
-
+    
     public ExpiryDateEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         listenForTextChanges();
     }
-
+    
     public ExpiryDateEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         listenForTextChanges();
     }
-
+    
     @Override
     public void onInitializeAccessibilityNodeInfo(@NonNull AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
         String accLabel = getResources().getString(
-            R.string.acc_label_expiry_date_node,
-            getText()
+                R.string.acc_label_expiry_date_node,
+                getText()
         );
         info.setText(accLabel);
     }
-
+    
     /**
      * Gets whether or not the date currently entered is valid and not yet
      * passed.
@@ -55,7 +55,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
     public boolean isDateValid() {
         return mIsDateValid;
     }
-
+    
     /**
      * Gets the expiry date displayed on this control if it is valid, or {@code null} if it is not.
      * The return value is given as a length-2 {@code int} array, where the first entry is the
@@ -70,11 +70,11 @@ public class ExpiryDateEditText extends TranzzoEditText {
         if (!mIsDateValid) {
             return null;
         }
-
+        
         final int[] monthYearPair = new int[2];
         final String rawNumericInput = getText().toString().replaceAll("/", "");
         final String[] dateFields = DateUtils.separateDateStringParts(rawNumericInput);
-
+        
         try {
             monthYearPair[0] = Integer.parseInt(dateFields[0]);
             final int twoDigitYear = Integer.parseInt(dateFields[1]);
@@ -85,21 +85,21 @@ public class ExpiryDateEditText extends TranzzoEditText {
             // not his this exception. Returning null to indicate error if we do.
             return null;
         }
-
+        
         return monthYearPair;
     }
-
+    
     public void setExpiryDateEditListener(ExpiryDateEditListener expiryDateEditListener) {
         mExpiryDateEditListener = expiryDateEditListener;
     }
-
+    
     private void listenForTextChanges() {
         addTextChangedListener(new TextWatcher() {
             boolean ignoreChanges = false;
             int latestChangeStart;
             int latestInsertionSize;
             String[] parts = new String[2];
-
+            
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 if (ignoreChanges) {
@@ -108,17 +108,17 @@ public class ExpiryDateEditText extends TranzzoEditText {
                 latestChangeStart = start;
                 latestInsertionSize = after;
             }
-
+            
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (ignoreChanges) {
                     return;
                 }
-
+                
                 boolean inErrorState = false;
-
+                
                 String rawNumericInput = s.toString().replaceAll("/", "");
-
+                
                 if (rawNumericInput.length() == 1
                         && latestChangeStart == 0
                         && latestInsertionSize == 1) {
@@ -140,14 +140,14 @@ public class ExpiryDateEditText extends TranzzoEditText {
                     // where "12/3" + DEL => "12" is handled elsewhere.
                     rawNumericInput = rawNumericInput.substring(0, 1);
                 }
-
+                
                 // Date input is MM/YY, so the separated parts will be {MM, YY}
                 parts = DateUtils.separateDateStringParts(rawNumericInput);
-
+                
                 if (!DateUtils.isValidMonth(parts[0])) {
                     inErrorState = true;
                 }
-
+                
                 StringBuilder formattedDateBuilder = new StringBuilder();
                 formattedDateBuilder.append(parts[0]);
                 // parts[0] is the two-digit month
@@ -157,20 +157,20 @@ public class ExpiryDateEditText extends TranzzoEditText {
                 }
                 // parts[1] is the two-digit year
                 formattedDateBuilder.append(parts[1]);
-
+                
                 String formattedDate = formattedDateBuilder.toString();
                 int cursorPosition = updateSelectionIndex(
                         formattedDate.length(),
                         latestChangeStart,
                         latestInsertionSize,
                         MAX_INPUT_LENGTH);
-
+                
                 ignoreChanges = true;
                 setText(formattedDate);
                 setSelection(cursorPosition);
                 ignoreChanges = false;
             }
-
+            
             @Override
             public void afterTextChanged(Editable s) {
                 // Note: we want to show an error state if the month is invalid or the
@@ -181,7 +181,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
                     // This covers the case where the user has entered a month of 15, for instance.
                     shouldShowError = true;
                 }
-
+                
                 // Note that we have to check the parts array because afterTextChanged has odd
                 // behavior when it comes to pasting, where a paste of "1212" triggers this
                 // function for the strings "12/12" (what it actually becomes) and "1212",
@@ -198,18 +198,18 @@ public class ExpiryDateEditText extends TranzzoEditText {
                 } else {
                     mIsDateValid = false;
                 }
-
+                
                 setShouldShowError(shouldShowError);
             }
         });
     }
-
+    
     /**
      * Updates the selection index based on the current (pre-edit) index, and
      * the size change of the number being input.
      *
-     * @param newLength the post-edit length of the string
-     * @param editActionStart the position in the string at which the edit action starts
+     * @param newLength          the post-edit length of the string
+     * @param editActionStart    the position in the string at which the edit action starts
      * @param editActionAddition the number of new characters going into the string (zero for
      *                           delete)
      * @return an index within the string at which to put the cursor
@@ -221,18 +221,18 @@ public class ExpiryDateEditText extends TranzzoEditText {
             int editActionAddition,
             int maxInputLength) {
         int newPosition, gapsJumped = 0;
-
+        
         boolean skipBack = false;
         if (editActionStart <= 2 && editActionStart + editActionAddition >= 2) {
             gapsJumped = 1;
         }
-
+        
         // editActionAddition can only be 0 if we are deleting,
         // so we need to check whether or not to skip backwards one space
         if (editActionAddition == 0 && editActionStart == 3) {
             skipBack = true;
         }
-
+        
         newPosition = editActionStart + editActionAddition + gapsJumped;
         if (skipBack && newPosition > 0) {
             newPosition--;
@@ -240,7 +240,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
         int untruncatedPosition = newPosition <= newLength ? newPosition : newLength;
         return Math.min(maxInputLength, untruncatedPosition);
     }
-
+    
     private void updateInputValues(@NonNull @Size(2) String[] parts) {
         int inputMonth;
         int inputYear;
@@ -253,7 +253,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
                 inputMonth = INVALID_INPUT;
             }
         }
-
+        
         if (parts[1].length() != 2) {
             inputYear = INVALID_INPUT;
         } else {
@@ -263,10 +263,16 @@ public class ExpiryDateEditText extends TranzzoEditText {
                 inputYear = INVALID_INPUT;
             }
         }
-
+        
         mIsDateValid = DateUtils.isExpiryDataValid(inputMonth, inputYear);
     }
-
+    
+    /**
+     * This listener is triggered on expiry date input completion.
+     *
+     * @note event is triggered only for valid expiry date.
+     * @see #setExpiryDateEditListener(ExpiryDateEditListener)
+     */
     interface ExpiryDateEditListener {
         void onExpiryDateComplete();
     }
