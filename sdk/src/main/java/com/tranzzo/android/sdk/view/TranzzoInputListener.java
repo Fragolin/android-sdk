@@ -18,17 +18,35 @@ public class TranzzoInputListener implements
     
     private final InputCompletedListener listener;
     
+    private final SafeCallable<Boolean> isFormValidProgram;
+    
     public TranzzoInputListener(
-            @NonNull CardNumberEditText cardInput,
-            @NonNull ExpiryDateEditText expiryInput,
-            @NonNull CvcEditText cvcInput,
-            @NonNull InputCompletedListener listener
+            @NonNull final CardNumberEditText cardInput,
+            @NonNull final ExpiryDateEditText expiryInput,
+            @NonNull final CvcEditText cvcInput,
+            @NonNull final InputCompletedListener listener
     ) {
         cardInput.addCardNumberCompleteListener(this);
         cardInput.addCardBrandChangeListener(this);
         expiryInput.addExpiryDateEditListener(this);
         cvcInput.addCvcInputListener(this);
+        
+        this.isFormValidProgram = new SafeCallable<Boolean>() {
+            @Override
+            public Boolean call() {
+                return cardInput.isCardNumberValid() && expiryInput.isDateValid() && cvcInput.isCvcValid();
+            }
+        };
+        
         this.listener = listener;
+    }
+    
+    public boolean isFormValid() {
+        try {
+            return isFormValidProgram.call();
+        } catch (Exception e) {
+            return false;
+        }
     }
     
     @Override
@@ -63,6 +81,10 @@ public class TranzzoInputListener implements
     
     public interface InputCompletedListener {
         void onInputCompleted();
+    }
+    
+    private interface SafeCallable<V> {
+        V call();
     }
     
 }

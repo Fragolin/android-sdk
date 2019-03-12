@@ -18,6 +18,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     private Button btnFillInDefault;
     private Button btnFillInWrong;
     private Button btnClear;
+    private Button btnCheckFormValid;
     private ImageView imgBrand;
     
     private CardNumberEditText etCardNumber;
@@ -148,11 +149,28 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                     }
                 }
         );
+    
+        btnCheckFormValid = findViewById(R.id.btnCheckFormValid);
+        btnCheckFormValid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cardInputListener.isFormValid()){
+                    displayResult("VALID");
+                } else {
+                    displayError("INVALID");
+                }
+            }
+        });
         
     }
     
     private void displayError(String text) {
         tvResult.setTextColor(getResources().getColor(R.color.colorRed));
+        tvResult.setText(text);
+    }
+    
+    private void displayResult(String text) {
+        tvResult.setTextColor(getResources().getColor(R.color.colorGreen));
         tvResult.setText(text);
     }
     
@@ -167,8 +185,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(TokenResult cardToken) {
             if (cardToken.isSuccessful()) {
-                tvResult.setTextColor(getResources().getColor(R.color.colorGreen));
-                tvResult.setText(cardToken.token.toString());
+                displayResult(cardToken.token.toString());
                 
                 Log.i("TOKEN", ">>> " + cardToken.token.toString());
             } else {
