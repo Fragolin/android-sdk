@@ -1,9 +1,20 @@
 package com.tranzzo.android.sdk;
 
+/**
+ * Represents tokenization result.
+ */
 public class TokenResult {
     
     public final CardToken token;
     public final TrzError error;
+    
+    static TokenResult failure(TrzError error) {
+        return new TokenResult(null, error);
+    }
+    
+    static TokenResult success(CardToken token) {
+        return new TokenResult(token, null);
+    }
     
     private TokenResult(CardToken token, TrzError error) {
         this.token = token;
@@ -12,14 +23,6 @@ public class TokenResult {
     
     public boolean isSuccessful() {
         return null == error;
-    }
-    
-    public static TokenResult failure(TrzError error) {
-        return new TokenResult(null, error);
-    }
-    
-    public static TokenResult success(CardToken token) {
-        return new TokenResult(token, null);
     }
     
 }

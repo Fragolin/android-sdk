@@ -2,6 +2,7 @@ package com.tranzzo.android.sdk.demo;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
@@ -98,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         etCardNumber.setCardBrandChangeListener(new CardNumberEditText.CardBrandChangeListener() {
             @Override
             public void onCardBrandChanged(CardBrand brand) {
-                
                 tvBrand.setText(brand.toString());
                 imgBrand.setImageResource(brand.img);
             }
@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
             if (cardToken.isSuccessful()) {
                 tvResult.setTextColor(getResources().getColor(R.color.colorGreen));
                 tvResult.setText(cardToken.token.toString());
+    
+                Log.i("TOKEN", ">>> " + cardToken.token.toString());
             } else {
                 displayError(cardToken.error.toString());
             }

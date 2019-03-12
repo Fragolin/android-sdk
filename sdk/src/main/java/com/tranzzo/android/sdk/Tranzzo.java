@@ -17,10 +17,16 @@ import static com.tranzzo.android.sdk.TelemetryUtils.*;
 /**
  * Entry point for Tranzzo SDK API.
  */
+@SuppressLint("SimpleDateFormat")
 public class Tranzzo {
     
-    @SuppressLint("SimpleDateFormat")
-    private static final DateFormat DATE_TIME_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    
+    private static final DateFormat DATE_TIME_PARSER;
+    
+    static {
+        DATE_TIME_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        DATE_TIME_PARSER.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
     
     private final String apiToken;
     private final TranzzoApi api;

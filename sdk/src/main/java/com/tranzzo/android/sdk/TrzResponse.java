@@ -17,4 +17,12 @@ public class TrzResponse {
         this.body = body;
     }
     
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("TrzResponse{");
+        sb.append("success=").append(success);
+        sb.append(", body='").append(body).append('\'');
+        sb.append('}');
+        return sb.toString();
+    }
 }
