@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Utility class for common text-related operations on Stripe data coming from the server.
+ * Utility class for common text-related operations on Tranzzo data coming from the server.
  */
 public class TranzzoTextUtils {
 
