@@ -16,6 +16,26 @@ public class CardToken {
     }
     
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        CardToken cardToken = (CardToken) o;
+        
+        if (!token.equals(cardToken.token)) return false;
+        if (!expiresAt.equals(cardToken.expiresAt)) return false;
+        return mask.equals(cardToken.mask);
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = token.hashCode();
+        result = 31 * result + expiresAt.hashCode();
+        result = 31 * result + mask.hashCode();
+        return result;
+    }
+    
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CardToken{");
         sb.append("token='").append(token).append('\'');

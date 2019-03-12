@@ -32,8 +32,8 @@ public class Card {
      *
      * @return {@code true} if valid, {@code false} otherwise.
      */
-    public boolean validateCard() {
-        return validateCard(Calendar.getInstance());
+    public boolean isValid() {
+        return isValid(Calendar.getInstance());
     }
     
     /**
@@ -81,7 +81,7 @@ public class Card {
         return expYear != null && !ModelUtils.hasYearPassed(expYear, now);
     }
     
-    boolean validateCard(@NonNull Calendar now) {
+    boolean isValid(@NonNull Calendar now) {
         if (cvc == null) {
             return validateNumber() && validateExpiryDate(now);
         } else {
@@ -107,7 +107,7 @@ public class Card {
         this.brand = CardBrand.fromNumber(number);
     }
     
-    public SortedMap<String, Object> toMap() {
+    public Map<String, Object> toMap() {
         return new TreeMap<String, Object>() {{
             put("card_number", number);
             put("card_exp_month", expMonth);

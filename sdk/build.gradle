@@ -33,6 +33,10 @@ android {
             buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget-stg.tranzzo.com\"")
         }
     }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+    }
 
 }
 
@@ -48,7 +52,13 @@ dependencies {
     testImplementation 'androidx.test:core:1.1.0'
 
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
+
+    androidTestImplementation 'androidx.test:core:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test:rules:1.1.2-alpha02'
+    androidTestImplementation "org.mockito:mockito-core:2.25.0"
+
 
 
 }

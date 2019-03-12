@@ -9,21 +9,42 @@ import androidx.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-final class TelemetryUtils {
+final class TelemetryUtils implements TelemetryProvider {
     
     @NonNull
-    static String getApplicationName(Context context) {
+    @Override
+    public Map<String, String> collect(@NonNull final Context context) {
+        return new TreeMap<String, String>() {{
+            put("platform", "android");
+            put("sdk_version", String.valueOf(BuildConfig.VERSION_CODE));
+            put("os_version", getAndroidVersionString());
+            put("os_build_version", Build.VERSION.RELEASE);
+            put("os_build_number", String.valueOf(Build.VERSION.SDK_INT));
+            put("device_id", getHashedId(context));
+            put("device_manufacturer", Build.MANUFACTURER);
+            put("device_brand", Build.BRAND);
+            put("device_model", Build.MODEL);
+            put("device_tags", Build.TAGS);
+            put("device_screen_res", getScreen(context));
+            put("device_locale", Locale.getDefault().toString());
+            put("device_time_zone", getTimeZoneString());
+            put("app_name", getApplicationName(context));
+            put("app_package", context.getPackageName());
+        }};
+    }
+    
+    @NonNull
+    private String getApplicationName(@NonNull final Context context) {
         ApplicationInfo applicationInfo = context.getApplicationInfo();
         int stringId = applicationInfo.labelRes;
         return stringId == 0 ? applicationInfo.nonLocalizedLabel.toString() : context.getString(stringId);
     }
     
     @NonNull
-    static String getAndroidVersionString() {
+    private String getAndroidVersionString() {
         final String delimiter = " ";
         return "Android" + delimiter +
                 Build.VERSION.RELEASE + delimiter +
@@ -33,7 +54,7 @@ final class TelemetryUtils {
     
     @NonNull
     @SuppressLint("HardwareIds")
-    static String getHashedId(@NonNull final Context context) {
+    private String getHashedId(@NonNull final Context context) {
         String id = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
         if (id == null || id.isEmpty()) {
             return "";
@@ -44,7 +65,7 @@ final class TelemetryUtils {
     
     
     @NonNull
-    static String getScreen(@NonNull final Context context) {
+    private String getScreen(@NonNull final Context context) {
         if (context.getResources() == null) {
             return "";
         }
@@ -58,7 +79,7 @@ final class TelemetryUtils {
     
     
     @NonNull
-    static String getTimeZoneString() {
+    private String getTimeZoneString() {
         int minutes =
                 (int) TimeUnit.MINUTES.convert(TimeZone.getDefault().getRawOffset(),
                         TimeUnit.MILLISECONDS);

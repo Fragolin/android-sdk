@@ -1,13 +1,16 @@
 package com.tranzzo.android.sdk;
 
+import androidx.annotation.NonNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.UUID;
 
 public class TrzError {
     public final String id;
     public final String message;
     
-    public TrzError(String id, String message) {
+    public TrzError(@NonNull String id, @NonNull String message) {
         this.id = id;
         this.message = message;
     }
@@ -26,13 +29,35 @@ public class TrzError {
      * @param json JSON to parse
      * @return either parsed exception or generic one.
      */
-    public static TrzError fromJson(JSONObject json) {
+    static TrzError fromJson(JSONObject json) {
         try {
             return new TrzError(json.getString("id"), json.getString("error_message"));
         } catch (JSONException e) {
             e.printStackTrace();
-            return new TrzError("Unknown", "Failed to parse server response: " + json.toString());
+            return new TrzError("Unknown", Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + json.toString());
         }
+    }
+    
+    static TrzError mkInternal(String message){
+        return new TrzError(UUID.randomUUID().toString(), message);
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        
+        TrzError trzError = (TrzError) o;
+        
+        if (!id.equals(trzError.id)) return false;
+        return message.equals(trzError.message);
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + message.hashCode();
+        return result;
     }
     
     @Override

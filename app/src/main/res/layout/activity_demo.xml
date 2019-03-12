@@ -5,13 +5,13 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16sp"
-    tools:context=".MainActivity">
+    tools:context=".TranzzoDemoActivity">
 
     <com.tranzzo.android.sdk.view.CardNumberEditText
         android:id="@+id/etCardNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
+        android:layout_gravity="start"
         android:layout_marginBottom="16sp"
         android:accessibilityTraversalBefore="@+id/etExpiration"
         android:background="@android:color/transparent"
@@ -102,11 +102,10 @@
             android:id="@+id/imgBrand"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_weight="1"
             android:contentDescription="Card brand"
-            android:src="@drawable/ic_unknown"
-            android:layout_gravity="center"
-            />
+            android:src="@drawable/ic_unknown" />
 
     </LinearLayout>
 
@@ -146,7 +145,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="16sp">
 
         <TextView
             android:id="@+id/tvResult"

@@ -10,7 +10,7 @@ import com.tranzzo.android.sdk.TokenResult;
 import com.tranzzo.android.sdk.Tranzzo;
 import com.tranzzo.android.sdk.view.*;
 
-public class MainActivity extends AppCompatActivity {
+public class TranzzoDemoActivity extends AppCompatActivity {
     
     private TextView tvResult;
     private TextView tvBrand;
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_demo);
     
         tvResult = findViewById(R.id.tvResult);
         tvBrand = findViewById(R.id.tvBrand);
