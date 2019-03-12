@@ -23,43 +23,48 @@ import com.tranzzo.android.sdk.R;
  * and modern Google Keyboard delete key presses.
  */
 public class TranzzoEditText extends TextInputEditText {
-
+    
     @Nullable
     private AfterTextChangedListener mAfterTextChangedListener;
+    
     @Nullable
     private DeleteEmptyListener mDeleteEmptyListener;
+    
     @Nullable
     private ColorStateList mCachedColorStateList;
+    
     private boolean mShouldShowError;
+    
     @ColorRes
     private int mDefaultErrorColorResId;
+    
     @ColorInt
     private int mErrorColor;
-
+    
     private Handler mHandler;
     private String mErrorMessage;
     private ErrorMessageListener mErrorMessageListener;
-
+    
     public TranzzoEditText(Context context) {
         super(context);
         initView();
     }
-
+    
     public TranzzoEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         initView();
     }
-
+    
     public TranzzoEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initView();
     }
-
+    
     @Nullable
     public ColorStateList getCachedColorStateList() {
         return mCachedColorStateList;
     }
-
+    
     /**
      * Gets whether or not the text should be displayed in error mode.
      *
@@ -68,7 +73,7 @@ public class TranzzoEditText extends TextInputEditText {
     public boolean getShouldShowError() {
         return mShouldShowError;
     }
-
+    
     /**
      * @return the color used for error text.
      */
@@ -79,7 +84,7 @@ public class TranzzoEditText extends TextInputEditText {
         determineDefaultErrorColor();
         return ContextCompat.getColor(getContext(), mDefaultErrorColorResId);
     }
-
+    
     @Override
     public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
         InputConnection inputConnection = super.onCreateInputConnection(outAttrs);
@@ -88,7 +93,7 @@ public class TranzzoEditText extends TextInputEditText {
         }
         return new SoftDeleteInputConnection(super.onCreateInputConnection(outAttrs), true);
     }
-
+    
     /**
      * Sets a listener that can react to changes in text, but only by reflecting the new
      * text in the field.
@@ -99,7 +104,7 @@ public class TranzzoEditText extends TextInputEditText {
             @Nullable AfterTextChangedListener afterTextChangedListener) {
         mAfterTextChangedListener = afterTextChangedListener;
     }
-
+    
     /**
      * Sets a listener that can react to the user attempting to delete the empty string.
      *
@@ -108,15 +113,15 @@ public class TranzzoEditText extends TextInputEditText {
     void setDeleteEmptyListener(@Nullable DeleteEmptyListener deleteEmptyListener) {
         mDeleteEmptyListener = deleteEmptyListener;
     }
-
+    
     void setErrorMessageListener(@Nullable ErrorMessageListener errorMessageListener) {
         mErrorMessageListener = errorMessageListener;
     }
-
+    
     void setErrorMessage(@Nullable String errorMessage) {
         mErrorMessage = errorMessage;
     }
-
+    
     /**
      * Sets the error text color on this {@link TranzzoEditText}.
      *
@@ -125,11 +130,11 @@ public class TranzzoEditText extends TextInputEditText {
     public void setErrorColor(@ColorInt int errorColor) {
         mErrorColor = errorColor;
     }
-
+    
     /**
      * Change the hint value of this control after a delay.
      *
-     * @param hintResource the string resource for the hint to be set
+     * @param hintResource      the string resource for the hint to be set
      * @param delayMilliseconds a delay period, measured in milliseconds
      */
     public void setHintDelayed(@StringRes final int hintResource, long delayMilliseconds) {
@@ -141,7 +146,7 @@ public class TranzzoEditText extends TextInputEditText {
         };
         mHandler.postDelayed(hintRunnable, delayMilliseconds);
     }
-
+    
     /**
      * Sets whether or not the text should be put into "error mode," which displays
      * the text in an error color determined by the original text color.
@@ -160,18 +165,18 @@ public class TranzzoEditText extends TextInputEditText {
             } else {
                 setTextColor(mCachedColorStateList);
             }
-
+            
             refreshDrawableState();
         }
     }
-
+    
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         // Passing a null token removes all callbacks and messages to the handler.
         mHandler.removeCallbacksAndMessages(null);
     }
-
+    
     private void initView() {
         mHandler = new Handler();
         listenForTextChanges();
@@ -179,7 +184,7 @@ public class TranzzoEditText extends TextInputEditText {
         determineDefaultErrorColor();
         mCachedColorStateList = getTextColors();
     }
-
+    
     private void determineDefaultErrorColor() {
         mCachedColorStateList = getTextColors();
         int color = mCachedColorStateList.getDefaultColor();
@@ -191,19 +196,19 @@ public class TranzzoEditText extends TextInputEditText {
             mDefaultErrorColorResId = R.color.error_text_dark_theme;
         }
     }
-
+    
     private void listenForTextChanges() {
         addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 // purposefully not implemented.
             }
-
+            
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // purposefully not implemented.
             }
-
+            
             @Override
             public void afterTextChanged(Editable s) {
                 if (mAfterTextChangedListener != null) {
@@ -212,7 +217,7 @@ public class TranzzoEditText extends TextInputEditText {
             }
         });
     }
-
+    
     private void listenForDeleteEmpty() {
         // This method works for hard keyboards and older phones.
         setOnKeyListener(new View.OnKeyListener() {
@@ -228,25 +233,25 @@ public class TranzzoEditText extends TextInputEditText {
             }
         });
     }
-
+    
     interface DeleteEmptyListener {
         void onDeleteEmpty();
     }
-
+    
     interface AfterTextChangedListener {
         void onTextChanged(String text);
     }
-
+    
     interface ErrorMessageListener {
         void displayErrorMessage(@Nullable String message);
     }
-
+    
     private class SoftDeleteInputConnection extends InputConnectionWrapper {
-
+        
         SoftDeleteInputConnection(InputConnection target, boolean mutable) {
             super(target, mutable);
         }
-
+        
         @Override
         public boolean deleteSurroundingText(int beforeLength, int afterLength) {
             // This method works on modern versions of Android with soft keyboard delete.

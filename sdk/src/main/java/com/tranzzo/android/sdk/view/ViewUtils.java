@@ -1,110 +1,16 @@
 package com.tranzzo.android.sdk.view;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.util.TypedValue;
 import androidx.annotation.*;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 
-import static com.tranzzo.android.sdk.view.CardX.CVC_LENGTH_AMERICAN_EXPRESS;
-import static com.tranzzo.android.sdk.view.CardX.CVC_LENGTH_COMMON;
+import static com.tranzzo.android.sdk.view.Card.CVC_LENGTH_AMERICAN_EXPRESS;
+import static com.tranzzo.android.sdk.view.Card.CVC_LENGTH_COMMON;
 
 /**
  * Static utility functions needed for View classes.
  */
 class ViewUtils {
-
-    @NonNull
-    static TypedValue getThemeAccentColor(@NonNull Context context) {
-        @IdRes final int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.colorAccent;
-        } else {
-            //Get colorAccent defined for AppCompat
-            colorAttr = context
-                    .getResources()
-                    .getIdentifier("colorAccent", "attr", context.getPackageName());
-        }
-        final TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(colorAttr, outValue, true);
-        return outValue;
-    }
-
-    @NonNull
-    static TypedValue getThemeColorControlNormal(@NonNull Context context) {
-        @IdRes final int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.colorControlNormal;
-        } else {
-            //Get colorControlNormal defined for AppCompat
-            colorAttr = context
-                    .getResources()
-                    .getIdentifier("colorControlNormal", "attr", context.getPackageName());
-        }
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(colorAttr, outValue, true);
-        return outValue;
-    }
-
-    @NonNull
-    static TypedValue getThemeTextColorSecondary(@NonNull Context context) {
-        @IdRes final int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.textColorSecondary;
-        } else {
-            //Get textColorSecondary defined for AppCompat
-            colorAttr = android.R.color.secondary_text_light;
-        }
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(colorAttr, outValue, true);
-        return outValue;
-    }
-
-    @NonNull
-    static TypedValue getThemeTextColorPrimary(@NonNull Context context) {
-        @IdRes final int colorAttr;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            colorAttr = android.R.attr.textColorPrimary;
-        } else {
-            //Get textColorPrimary defined for AppCompat
-            colorAttr = android.R.color.primary_text_light;
-        }
-        TypedValue outValue = new TypedValue();
-        context.getTheme().resolveAttribute(colorAttr, outValue, true);
-        return outValue;
-    }
-
-    @NonNull
-    static Drawable getTintedIcon(
-            @NonNull Context context,
-            @DrawableRes int iconResourceId,
-            @ColorRes int colorResourceId) {
-        @ColorInt final int color = ContextCompat.getColor(context, colorResourceId);
-        final Drawable icon = ContextCompat.getDrawable(context, iconResourceId);
-        Drawable compatIcon = DrawableCompat.wrap(icon);
-        DrawableCompat.setTint(compatIcon.mutate(), color);
-        return compatIcon;
-    }
-
-    @NonNull
-    static Drawable getTintedIconWithAttribute(
-            @NonNull Context context,
-            @NonNull Resources.Theme theme,
-            @AttrRes int attributeResource,
-            @DrawableRes int iconResourceId) {
-        final TypedValue typedValue = new TypedValue();
-        theme.resolveAttribute(attributeResource, typedValue, true);
-        @ColorInt int color = typedValue.data;
-        final Drawable icon = ContextCompat.getDrawable(context, iconResourceId);
-        final Drawable compatIcon = DrawableCompat.wrap(icon);
-        DrawableCompat.setTint(compatIcon.mutate(), color);
-        return compatIcon;
-    }
-
+    
     /**
      * Check to see whether the color int is essentially transparent.
      *
@@ -114,7 +20,7 @@ class ViewUtils {
     static boolean isColorTransparent(@ColorInt int color) {
         return Color.alpha(color) < 0x10;
     }
-
+    
     /**
      * A crude mechanism by which we check whether or not a color is "dark."
      * This is subject to much interpretation, but we attempt to follow traditional
@@ -132,19 +38,19 @@ class ViewUtils {
         // http://paulbourke.net/texture_colour/colourspace/ for further reading.
         double luminescence = 0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 *
                 Color.blue(color);
-
+        
         // Because the colors are all hex integers.
         double luminescencePercentage = luminescence / 255;
         return luminescencePercentage <= 0.5;
     }
-
-    static boolean isCvcMaximalLength(@NonNull @CardX.Brand String cardBrand,
+    
+    static boolean isCvcMaximalLength(CardBrand cardBrand,
                                       @Nullable String cvcText) {
         if (cvcText == null) {
             return false;
         }
 
-        if (CardX.AMERICAN_EXPRESS.equals(cardBrand)) {
+        if (cardBrand == CardBrand.AMERICAN_EXPRESS) {
             return cvcText.trim().length() == CVC_LENGTH_AMERICAN_EXPRESS;
         } else {
             return cvcText.trim().length() == CVC_LENGTH_COMMON;
@@ -157,18 +63,18 @@ class ViewUtils {
      * Note that this does not verify that the card number is valid, or even that it is a number.
      *
      * @param spacelessCardNumber the raw card number, without spaces
-     * @param brand the {@link CardX.Brand} to use as a separating scheme
+     * @param brand the {@link CardBrand} to use as a separating scheme
      * @return an array of strings with the number groups, in order. If the number is not complete,
      * some of the array entries may be {@code null}.
      */
     @NonNull
     static String[] separateCardNumberGroups(@NonNull String spacelessCardNumber,
-                                             @NonNull @CardX.Brand String brand) {
+                                             @NonNull CardBrand brand) {
         if (spacelessCardNumber.length() > 16) {
             spacelessCardNumber = spacelessCardNumber.substring(0, 16);
         }
         String[] numberGroups;
-        if (brand.equals(CardX.AMERICAN_EXPRESS)) {
+        if (brand == CardBrand.AMERICAN_EXPRESS) {
             numberGroups = new String[3];
 
             int length = spacelessCardNumber.length();
@@ -206,10 +112,6 @@ class ViewUtils {
             numberGroups[i] = spacelessCardNumber.substring(previousStart);
         }
         return numberGroups;
-    }
-
-    static int getPxFromDp(Context context, int dp) {
-        return (int) (dp * context.getResources().getDisplayMetrics().density);
     }
 
 }

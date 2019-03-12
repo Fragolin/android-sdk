@@ -3,9 +3,9 @@ package com.tranzzo.android.sdk;
 public class TokenResult {
     
     public final CardToken token;
-    public final TrzResponse.TrzError error;
+    public final TrzError error;
     
-    private TokenResult(CardToken token, TrzResponse.TrzError error) {
+    private TokenResult(CardToken token, TrzError error) {
         this.token = token;
         this.error = error;
     }
@@ -14,7 +14,7 @@ public class TokenResult {
         return null == error;
     }
     
-    public static TokenResult failure(TrzResponse.TrzError error) {
+    public static TokenResult failure(TrzError error) {
         return new TokenResult(null, error);
     }
     

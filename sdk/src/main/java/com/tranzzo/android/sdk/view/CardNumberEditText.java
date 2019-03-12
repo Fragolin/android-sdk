@@ -29,8 +29,7 @@ public class CardNumberEditText extends TranzzoEditText {
             new HashSet<>(Arrays.asList(SPACES_ARRAY_AMEX));
 
     @VisibleForTesting
-    @CardX.Brand
-    String mCardBrand = CardX.UNKNOWN;
+    CardBrand mCardBrand = CardBrand.UNKNOWN;
     private CardBrandChangeListener mCardBrandChangeListener;
     private CardNumberCompleteListener mCardNumberCompleteListener;
     private int mLengthMax = 19;
@@ -53,8 +52,7 @@ public class CardNumberEditText extends TranzzoEditText {
     }
 
     @NonNull
-    @CardX.Brand
-    public String getCardBrand() {
+    public CardBrand getCardBrand() {
         return mCardBrand;
     }
 
@@ -94,15 +92,15 @@ public class CardNumberEditText extends TranzzoEditText {
         return mIsCardNumberValid;
     }
 
-    void setCardNumberCompleteListener(@NonNull CardNumberCompleteListener listener) {
+    public void setCardNumberCompleteListener(@NonNull CardNumberCompleteListener listener) {
         mCardNumberCompleteListener = listener;
     }
 
-    void setCardBrandChangeListener(@NonNull CardBrandChangeListener listener) {
+    public void setCardBrandChangeListener(@NonNull CardBrandChangeListener listener) {
         mCardBrandChangeListener = listener;
         // Immediately display the brand if known, in case this method is invoked when
         // partial data already exists.
-        mCardBrandChangeListener.onCardBrandChanged(mCardBrand);
+//        mCardBrandChangeListener.onCardBrandChanged(mCardBrand);
     }
 
     void updateLengthFilter() {
@@ -125,7 +123,7 @@ public class CardNumberEditText extends TranzzoEditText {
             int editActionStart,
             int editActionAddition) {
         int newPosition, gapsJumped = 0;
-        Set<Integer> gapSet = CardX.AMERICAN_EXPRESS.equals(mCardBrand)
+        Set<Integer> gapSet = mCardBrand == CardBrand.AMERICAN_EXPRESS
                 ? SPACE_SET_AMEX
                 : SPACE_SET_COMMON;
         boolean skipBack = false;
@@ -227,7 +225,7 @@ public class CardNumberEditText extends TranzzoEditText {
         });
     }
 
-    private void updateCardBrand(@NonNull @CardX.Brand String brand) {
+    private void updateCardBrand(@NonNull CardBrand brand) {
         if (mCardBrand.equals(brand)) {
             return;
         }
@@ -248,22 +246,22 @@ public class CardNumberEditText extends TranzzoEditText {
     }
 
     private void updateCardBrandFromNumber(String partialNumber) {
-        updateCardBrand(CardUtils.getPossibleCardType(partialNumber));
+        updateCardBrand(CardBrand.fromNumber(partialNumber));
     }
 
-    private static int getLengthForBrand(@CardX.Brand String cardBrand) {
-        if (CardX.AMERICAN_EXPRESS.equals(cardBrand) || CardX.DINERS_CLUB.equals(cardBrand)) {
+    private static int getLengthForBrand(CardBrand cardBrand) {
+        if (cardBrand == CardBrand.AMERICAN_EXPRESS || cardBrand == CardBrand.DINERS_CLUB) {
             return MAX_LENGTH_AMEX_DINERS;
         } else {
             return MAX_LENGTH_COMMON;
         }
     }
 
-    interface CardNumberCompleteListener {
+    public interface CardNumberCompleteListener {
         void onCardNumberComplete();
     }
 
-    interface CardBrandChangeListener {
-        void onCardBrandChanged(@NonNull @CardX.Brand String brand);
+    public interface CardBrandChangeListener {
+        void onCardBrandChanged(CardBrand brand);
     }
 }

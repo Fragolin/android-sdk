@@ -6,7 +6,11 @@ group 'com.tranzzo.android.sdk'
 android {
     compileSdkVersion 28
 
-
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 
     defaultConfig {
         minSdkVersion 16
@@ -23,7 +27,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField("String", "BUILD_TIME", "\"https://widget.tranzzo.com\"")
+            buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget.tranzzo.com\"")
         }
         debug {
             buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget-stg.tranzzo.com\"")
@@ -37,7 +41,14 @@ dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.2-alpha01'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.2-alpha01'
+
+    testImplementation "junit:junit:4.12"
+    testImplementation "org.mockito:mockito-core:2.25.0"
+    testImplementation "org.robolectric:robolectric:4.2"
+    testImplementation 'androidx.test:core:1.1.0'
+
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+
+
 }
