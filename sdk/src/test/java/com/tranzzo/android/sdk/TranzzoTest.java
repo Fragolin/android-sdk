@@ -21,14 +21,14 @@ public class TranzzoTest {
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     
     @Mock
-    TranzzoApi api;
+    private TranzzoApi api;
     
     @Mock
-    TelemetryProvider telemetryProvider;
+    private TelemetryProvider telemetryProvider;
     
     private Card validCard = new Card("4242424242424242", 12, 22, "000");
     
-    SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
+    private SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
     
     private String token = "IAMTOKEN";
     private String exp = "2022-12-31T00:00:00";

@@ -273,7 +273,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
      * @note event is triggered only for valid expiry date.
      * @see #setExpiryDateEditListener(ExpiryDateEditListener)
      */
-    interface ExpiryDateEditListener {
+    public interface ExpiryDateEditListener {
         void onExpiryDateComplete();
     }
 }

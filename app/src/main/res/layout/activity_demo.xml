@@ -62,7 +62,7 @@
             tools:ignore="UnusedAttribute"
             tools:importantForAccessibility="yes" />
 
-        <com.tranzzo.android.sdk.view.TranzzoEditText
+        <com.tranzzo.android.sdk.view.CvcEditText
             android:id="@+id/etCVV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

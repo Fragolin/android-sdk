@@ -22,7 +22,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     
     private CardNumberEditText etCardNumber;
     private ExpiryDateEditText etExpiration;
-    private TranzzoEditText etCvv;
+    private CvcEditText etCvv;
     
     private Card collectCard() {
         return
@@ -30,7 +30,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                         etCardNumber.getCardNumber(),
                         etExpiration.getValidDateFields()[0],
                         etExpiration.getValidDateFields()[1],
-                        etCvv.getText().toString()
+                        etCvv.getCvc()
                 );
     }
     
@@ -51,7 +51,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                 
                 boolean valid = etCardNumber.isCardNumberValid() &&
                         etExpiration.isDateValid() &&
-                        etCvv.length() == 3;
+                        etCvv.isCvcValid();
                 
                 if (valid) {
                     new TokenizeTask().execute(collectCard());
@@ -103,11 +103,35 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                 imgBrand.setImageResource(brand.img);
             }
         });
+        etCardNumber.setCardNumberCompleteListener(new CardNumberEditText.CardNumberCompleteListener() {
+            @Override
+            public void onCardNumberComplete() {
+                Toast
+                        .makeText(getApplicationContext(), "Card input completed", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
         
         etExpiration = findViewById(R.id.etExpiration);
         etExpiration.setErrorColor(getResources().getColor(R.color.colorRed));
+        etExpiration.setExpiryDateEditListener(new ExpiryDateEditText.ExpiryDateEditListener() {
+            @Override
+            public void onExpiryDateComplete() {
+                Toast
+                        .makeText(getApplicationContext(), "Expiry completed", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
         
         etCvv = findViewById(R.id.etCVV);
+        etCvv.setCvcInputListener(new CvcEditText.CvcInputListener() {
+            @Override
+            public void onCvcInputComplete() {
+                Toast
+                        .makeText(getApplicationContext(), "CVC completed", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        });
         
     }
     
