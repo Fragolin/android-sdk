@@ -29,9 +29,9 @@ public class CardNumberEditText extends TranzzoEditText {
             new HashSet<>(Arrays.asList(SPACES_ARRAY_AMEX));
     
     @VisibleForTesting
-    CardBrand mCardBrand = CardBrand.UNKNOWN;
-    private CardBrandChangeListener mCardBrandChangeListener;
-    private CardNumberCompleteListener mCardNumberCompleteListener;
+    private CardBrand mCardBrand = CardBrand.UNKNOWN;
+    private List<CardBrandChangeListener> mCardBrandChangeListeners = new ArrayList<>();
+    private List<CardNumberCompleteListener> mCardNumberCompleteListeners = new ArrayList<>();
     private int mLengthMax = 19;
     private boolean mIgnoreChanges = false;
     private boolean mIsCardNumberValid = false;
@@ -93,19 +93,15 @@ public class CardNumberEditText extends TranzzoEditText {
         return mIsCardNumberValid;
     }
     
-    public void setCardNumberCompleteListener(@NonNull CardNumberCompleteListener listener) {
-        mCardNumberCompleteListener = listener;
+    public void addCardNumberCompleteListener(@NonNull CardNumberCompleteListener listener) {
+        mCardNumberCompleteListeners.add(listener);
     }
     
-    public void setCardBrandChangeListener(@NonNull CardBrandChangeListener listener) {
-        mCardBrandChangeListener = listener;
+    public void addCardBrandChangeListener(@NonNull CardBrandChangeListener listener) {
+        mCardBrandChangeListeners.add(listener);
         // Immediately display the brand if known, in case this method is invoked when
         // partial data already exists.
-//        mCardBrandChangeListener.onCardBrandChanged(mCardBrand);
-    }
-    
-    void updateLengthFilter() {
-        setFilters(new InputFilter[] {new InputFilter.LengthFilter(mLengthMax)});
+        listener.onCardBrandChanged(mCardBrand);
     }
     
     /**
@@ -213,8 +209,10 @@ public class CardNumberEditText extends TranzzoEditText {
                     boolean before = mIsCardNumberValid;
                     mIsCardNumberValid = CardUtils.isValidCardNumber(s.toString());
                     setShouldShowError(!mIsCardNumberValid);
-                    if (!before && mIsCardNumberValid && mCardNumberCompleteListener != null) {
-                        mCardNumberCompleteListener.onCardNumberComplete();
+                    if (!before && mIsCardNumberValid) {
+                        for (CardNumberCompleteListener listener : mCardNumberCompleteListeners) {
+                            listener.onCardNumberComplete();
+                        }
                     }
                 } else {
                     mIsCardNumberValid = getText() != null
@@ -232,9 +230,9 @@ public class CardNumberEditText extends TranzzoEditText {
         }
         
         mCardBrand = brand;
-        
-        if (mCardBrandChangeListener != null) {
-            mCardBrandChangeListener.onCardBrandChanged(mCardBrand);
+    
+        for (CardBrandChangeListener listener : mCardBrandChangeListeners) {
+            listener.onCardBrandChanged(mCardBrand);
         }
         
         int oldLength = mLengthMax;
@@ -244,6 +242,10 @@ public class CardNumberEditText extends TranzzoEditText {
         }
         
         updateLengthFilter();
+    }
+    
+    private void updateLengthFilter() {
+        setFilters(new InputFilter[] {new InputFilter.LengthFilter(mLengthMax)});
     }
     
     private void updateCardBrandFromNumber(String partialNumber) {
@@ -262,7 +264,7 @@ public class CardNumberEditText extends TranzzoEditText {
      * This listener is triggered on card number input completion.
      *
      * @note event is triggered only for valid cards.
-     * @see #setCardNumberCompleteListener(CardNumberCompleteListener)
+     * @see #addCardNumberCompleteListener(CardNumberCompleteListener)
      */
     public interface CardNumberCompleteListener {
         void onCardNumberComplete();
@@ -271,9 +273,10 @@ public class CardNumberEditText extends TranzzoEditText {
     /**
      * Listener for card brand changes, e.g. for displaying card logo.
      *
-     * @see #setCardBrandChangeListener(CardBrandChangeListener)
+     * @see #addCardBrandChangeListener(CardBrandChangeListener)
      */
     public interface CardBrandChangeListener {
         void onCardBrandChanged(CardBrand brand);
     }
+    
 }

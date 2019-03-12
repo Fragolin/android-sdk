@@ -9,6 +9,9 @@ import android.widget.EditText;
 import androidx.annotation.*;
 import com.tranzzo.android.sdk.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * An {@link EditText} that handles putting numbers around a central divider character.
  */
@@ -17,7 +20,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
     static final int INVALID_INPUT = -1;
     private static final int MAX_INPUT_LENGTH = 5;
     
-    private ExpiryDateEditListener mExpiryDateEditListener;
+    private List<ExpiryDateEditListener> mExpiryDateEditListeners = new ArrayList<>();
     private boolean mIsDateValid;
     
     public ExpiryDateEditText(Context context) {
@@ -89,8 +92,8 @@ public class ExpiryDateEditText extends TranzzoEditText {
         return monthYearPair;
     }
     
-    public void setExpiryDateEditListener(ExpiryDateEditListener expiryDateEditListener) {
-        mExpiryDateEditListener = expiryDateEditListener;
+    public void addExpiryDateEditListener(ExpiryDateEditListener expiryDateEditListener) {
+        mExpiryDateEditListeners.add(expiryDateEditListener);
     }
     
     private void listenForTextChanges() {
@@ -192,8 +195,10 @@ public class ExpiryDateEditText extends TranzzoEditText {
                     // Here, we have a complete date, so if we've made an invalid one, we want
                     // to show an error.
                     shouldShowError = !mIsDateValid;
-                    if (!wasComplete && mIsDateValid && mExpiryDateEditListener != null) {
-                        mExpiryDateEditListener.onExpiryDateComplete();
+                    if (!wasComplete && mIsDateValid) {
+                        for (ExpiryDateEditListener listener : mExpiryDateEditListeners) {
+                            listener.onExpiryDateComplete();
+                        }
                     }
                 } else {
                     mIsDateValid = false;
@@ -271,7 +276,7 @@ public class ExpiryDateEditText extends TranzzoEditText {
      * This listener is triggered on expiry date input completion.
      *
      * @note event is triggered only for valid expiry date.
-     * @see #setExpiryDateEditListener(ExpiryDateEditListener)
+     * @see #addExpiryDateEditListener(ExpiryDateEditListener)
      */
     public interface ExpiryDateEditListener {
         void onExpiryDateComplete();

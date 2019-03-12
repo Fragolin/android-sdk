@@ -59,7 +59,7 @@ public class CvcEditText extends TranzzoEditText {
         return getText().toString();
     }
     
-    public void setCvcInputListener(CvcInputListener mCvcInputListener) {
+    public void addCvcInputListener(CvcInputListener mCvcInputListener) {
         this.mCvcInputListeners.add(mCvcInputListener);
     }
     
@@ -82,7 +82,7 @@ public class CvcEditText extends TranzzoEditText {
      * This listener is triggered on CVC input completion.
      *
      * @note event is triggered only for valid CVC.
-     * @see #setCvcInputListener(CvcInputListener)
+     * @see #addCvcInputListener(CvcInputListener)
      */
     public interface CvcInputListener {
         void onCvcInputComplete();

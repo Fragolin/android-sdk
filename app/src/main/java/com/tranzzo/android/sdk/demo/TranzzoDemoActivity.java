@@ -22,7 +22,8 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     
     private CardNumberEditText etCardNumber;
     private ExpiryDateEditText etExpiration;
-    private CvcEditText etCvv;
+    private CvcEditText etCvc;
+    private TranzzoInputListener cardInputListener;
     
     private Card collectCard() {
         return
@@ -30,7 +31,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                         etCardNumber.getCardNumber(),
                         etExpiration.getValidDateFields()[0],
                         etExpiration.getValidDateFields()[1],
-                        etCvv.getCvc()
+                        etCvc.getCvc()
                 );
     }
     
@@ -38,20 +39,19 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
-    
+        
         tvResult = findViewById(R.id.tvResult);
         tvBrand = findViewById(R.id.tvBrand);
         imgBrand = findViewById(R.id.imgBrand);
         
         btnTokenize = findViewById(R.id.btnTokenize);
-        
         btnTokenize.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 
                 boolean valid = etCardNumber.isCardNumberValid() &&
                         etExpiration.isDateValid() &&
-                        etCvv.isCvcValid();
+                        etCvc.isCvcValid();
                 
                 if (valid) {
                     new TokenizeTask().execute(collectCard());
@@ -60,50 +60,54 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                 }
             }
         });
+        btnTokenize.setEnabled(false);
         
         btnFillInDefault = findViewById(R.id.btnFillDefault);
-        
         btnFillInDefault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 etCardNumber.setText("4242424242424242");
                 etExpiration.setText("12/22");
-                etCvv.setText("123");
+                etCvc.setText("123");
             }
         });
         
         btnFillInWrong = findViewById(R.id.btnFillWrong);
-        
         btnFillInWrong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 etCardNumber.setText("1111111111111111");
                 etExpiration.setText("12/22");
-                etCvv.setText("123");
+                etCvc.setText("123");
             }
         });
         
         btnClear = findViewById(R.id.btnClearInputs);
-        
         btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 etCardNumber.setText("");
                 etExpiration.setText("");
-                etCvv.setText("");
+                etCvc.setText("");
+    
+                Toast
+                        .makeText(getApplicationContext(), "Card input completed", Toast.LENGTH_LONG)
+                        .show();
+                
+                btnTokenize.setEnabled(false);
             }
         });
         
         etCardNumber = findViewById(R.id.etCardNumber);
         etCardNumber.setErrorColor(getResources().getColor(R.color.colorRed));
-        etCardNumber.setCardBrandChangeListener(new CardNumberEditText.CardBrandChangeListener() {
+        etCardNumber.addCardBrandChangeListener(new CardNumberEditText.CardBrandChangeListener() {
             @Override
             public void onCardBrandChanged(CardBrand brand) {
                 tvBrand.setText(brand.toString());
                 imgBrand.setImageResource(brand.img);
             }
         });
-        etCardNumber.setCardNumberCompleteListener(new CardNumberEditText.CardNumberCompleteListener() {
+        etCardNumber.addCardNumberCompleteListener(new CardNumberEditText.CardNumberCompleteListener() {
             @Override
             public void onCardNumberComplete() {
                 Toast
@@ -114,7 +118,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         
         etExpiration = findViewById(R.id.etExpiration);
         etExpiration.setErrorColor(getResources().getColor(R.color.colorRed));
-        etExpiration.setExpiryDateEditListener(new ExpiryDateEditText.ExpiryDateEditListener() {
+        etExpiration.addExpiryDateEditListener(new ExpiryDateEditText.ExpiryDateEditListener() {
             @Override
             public void onExpiryDateComplete() {
                 Toast
@@ -123,8 +127,8 @@ public class TranzzoDemoActivity extends AppCompatActivity {
             }
         });
         
-        etCvv = findViewById(R.id.etCVV);
-        etCvv.setCvcInputListener(new CvcEditText.CvcInputListener() {
+        etCvc = findViewById(R.id.etCVV);
+        etCvc.addCvcInputListener(new CvcEditText.CvcInputListener() {
             @Override
             public void onCvcInputComplete() {
                 Toast
@@ -132,6 +136,18 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                         .show();
             }
         });
+        
+        cardInputListener = new TranzzoInputListener(
+                etCardNumber,
+                etExpiration,
+                etCvc,
+                new TranzzoInputListener.InputCompletedListener() {
+                    @Override
+                    public void onInputCompleted() {
+                        btnTokenize.setEnabled(true);
+                    }
+                }
+        );
         
     }
     
@@ -153,7 +169,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
             if (cardToken.isSuccessful()) {
                 tvResult.setTextColor(getResources().getColor(R.color.colorGreen));
                 tvResult.setText(cardToken.token.toString());
-    
+                
                 Log.i("TOKEN", ">>> " + cardToken.token.toString());
             } else {
                 displayError(cardToken.error.toString());
