@@ -5,10 +5,8 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.tranzzo.android.sdk.view.Card;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.*;
 import java.util.*;
 
 /**
@@ -18,16 +16,8 @@ import java.util.*;
 public class Tranzzo {
     
     @VisibleForTesting
-    static final DateFormat DATE_TIME_PARSER;
-    
-    @VisibleForTesting
     static final String OOPS_MESSAGE_INTERNAL = "An error occurred within Tranzzo SDK. Send us exception log and we will try to do out best!";
     static final String OOPS_MESSAGE_SERVER = "An error occurred within Tranzzo SDK. Send us this message and we will try to do out best: ";
-    
-    static {
-        DATE_TIME_PARSER = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        DATE_TIME_PARSER.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
     
     private final String apiToken;
     private final TranzzoApi api;
@@ -57,6 +47,16 @@ public class Tranzzo {
         this.log = log;
     }
     
+    /**
+     * Performs PCI DSS compliant card tokenization on Tranzzo server.
+     * Immediately returns an error for invalid card.
+     *
+     * @param card    card to tokenize
+     * @param context application context
+     * @return either successful {@link CardToken} result or {@link TrzError} inside {@link TokenResult}
+     * @see Card#isValid()
+     * @see TokenResult#isSuccessful()
+     */
     public TokenResult tokenize(@NonNull final Card card, @NonNull final Context context) {
         if (!card.isValid()) {
             return TokenResult.failure(TrzError.mkInternal("Attempt to tokenize invalid card."));
@@ -77,7 +77,7 @@ public class Tranzzo {
             
             if (response.success) {
                 log.debug("Response [success]: " + response);
-                return parseSuccess(response);
+                return TokenResult.success(CardToken.fromJson(response.body));
             } else {
                 log.error("Response [failure]: " + response.body);
                 return TokenResult.failure(TrzError.fromJson(new JSONObject(response.body)));
@@ -88,15 +88,6 @@ public class Tranzzo {
             log.error(OOPS_MESSAGE_INTERNAL + " Error id: " + internalErrorId, ex);
             return TokenResult.failure(new TrzError(internalErrorId, OOPS_MESSAGE_INTERNAL));
         }
-    }
-    
-    private TokenResult parseSuccess(TrzResponse response) throws JSONException, ParseException {
-        JSONObject json = new JSONObject(response.body);
-        return TokenResult.success(new CardToken(
-                json.getString("token"),
-                DATE_TIME_PARSER.parse(json.getString("expires_at")),
-                json.getString("card_mask")
-        ));
     }
     
     

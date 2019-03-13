@@ -13,15 +13,15 @@ public class CardUtils {
     private static final int LENGTH_DINERS_CLUB = 14;
     
     /**
-     * Returns a {@link Card.Brand} corresponding to a partial card number,
-     * or {@link Card#UNKNOWN} if the card brand can't be determined from the input value.
+     * Returns a {@link CardBrand} corresponding to a partial card number,
+     * or {@link CardBrand#UNKNOWN} if the card brand can't be determined from the input value.
      *
      * @param cardNumber a credit card number or partial card number
-     * @return the {@link Card.Brand} corresponding to that number,
-     * or {@link Card#UNKNOWN} if it can't be determined
+     * @return the {@link CardBrand} corresponding to that number,
+     * or {@link CardBrand#UNKNOWN} if it can't be determined
      */
     @NonNull
-    public static CardBrand getPossibleCardType(@Nullable String cardNumber) {
+    public static CardBrand getPossibleCardBrand(@Nullable String cardNumber) {
         return CardBrand.fromNumber(cardNumber);
     }
     

@@ -3,20 +3,10 @@ package com.tranzzo.android.sdk.view;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 /**
  * Utility class for common text-related operations on Tranzzo data coming from the server.
  */
-public class TranzzoTextUtils {
-
-    /**
-     * Util Array for converting bytes to a hex string.
-     * {@url http://stackoverflow.com/questions/9655181/convert-from-byte-array-to-hex-string-in-java}
-     */
-    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+class TranzzoTextUtils {
 
     /**
      * Swap {@code null} for blank text values.
@@ -25,7 +15,7 @@ public class TranzzoTextUtils {
      * @return {@code null} if the string is entirely whitespace, otherwise the input value
      */
     @Nullable
-    public static String nullIfBlank(@Nullable String value) {
+    static String nullIfBlank(@Nullable String value) {
         if (isBlank(value)) {
             return null;
         }
@@ -40,7 +30,7 @@ public class TranzzoTextUtils {
      * @param value a possibly blank input string value
      * @return {@code true} if and only if the value is all whitespace, {@code null}, or empty
      */
-    public static boolean isBlank(@Nullable String value) {
+    static boolean isBlank(@Nullable String value) {
         return value == null || value.trim().length() == 0;
     }
 
@@ -53,7 +43,7 @@ public class TranzzoTextUtils {
      * Returns {@code null} if the input was {@code null} or all spaces.
      */
     @Nullable
-    public static String removeSpacesAndHyphens(@Nullable String cardNumberWithSpaces) {
+    static String removeSpacesAndHyphens(@Nullable String cardNumberWithSpaces) {
         if (isBlank(cardNumberWithSpaces)) {
             return null;
         }
@@ -79,39 +69,5 @@ public class TranzzoTextUtils {
         }
         return false;
     }
-
-    /**
-     * Calculate a hash value of a String input and convert the result to a hex string.
-     *
-     * @param toHash a value to hash
-     * @return a hexadecimal string
-     */
-    @Nullable
-    static String shaHashInput(@Nullable String toHash) {
-        if (TranzzoTextUtils.isBlank(toHash)) {
-            return null;
-        }
-
-        try {
-            final MessageDigest digest = MessageDigest.getInstance("SHA-1");
-            final byte[] bytes = toHash.getBytes("UTF-8");
-            digest.update(bytes, 0, bytes.length);
-            return bytesToHex(digest.digest());
-        } catch (NoSuchAlgorithmException noSuchAlgorithm) {
-            return null;
-        } catch (UnsupportedEncodingException unsupportedCoding) {
-            return null;
-        }
-    }
-
-    @NonNull
-    private static String bytesToHex(@NonNull byte[] bytes) {
-        final char[] hexChars = new char[bytes.length * 2];
-        for (int i = 0; i < bytes.length; i++) {
-            final int v = bytes[i] & 0xFF;
-            hexChars[i * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[i * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
+    
 }

@@ -28,7 +28,6 @@ public class CardNumberEditText extends TranzzoEditText {
     private static final Set<Integer> SPACE_SET_AMEX =
             new HashSet<>(Arrays.asList(SPACES_ARRAY_AMEX));
     
-    @VisibleForTesting
     private CardBrand mCardBrand = CardBrand.UNKNOWN;
     private List<CardBrandChangeListener> mCardBrandChangeListeners = new ArrayList<>();
     private List<CardNumberCompleteListener> mCardNumberCompleteListeners = new ArrayList<>();

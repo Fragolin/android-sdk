@@ -6,15 +6,17 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
 import com.tranzzo.android.sdk.R;
-import com.tranzzo.android.sdk.util.TextWatcherAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * An {@link EditText} that handles putting numbers around a central divider character.
  */
 public class CvcEditText extends TranzzoEditText {
+    
+    private static final Pattern cvcPattern = Pattern.compile("[0-9]{3,4}");
     
     private List<CvcInputListener> mCvcInputListeners = new ArrayList<>();
     private boolean mIsCvcValid;
@@ -68,7 +70,7 @@ public class CvcEditText extends TranzzoEditText {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String cvc = s.toString();
-                mIsCvcValid = cvc.matches("[0-9]{3,4}");
+                mIsCvcValid = cvcPattern.matcher(cvc).matches();
                 if (mIsCvcValid){
                     for (CvcInputListener listener : mCvcInputListeners) {
                         listener.onCvcInputComplete();

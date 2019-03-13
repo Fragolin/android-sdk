@@ -55,7 +55,7 @@ public class TranzzoTest {
                 successJson,
                 (response, actual) -> {
                     assertTrue(actual.isSuccessful());
-                    assertEquals(new CardToken(token, Tranzzo.DATE_TIME_PARSER.parse(exp), cardMask), actual.token);
+                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.token);
                 }
         
         );

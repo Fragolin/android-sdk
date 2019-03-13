@@ -9,6 +9,13 @@ import java.util.*;
  */
 public class Card {
     
+    private static final Calendar UTC;
+    
+    static {
+        UTC = Calendar.getInstance();
+        UTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+    
     static final String F_CARD_NUMBER = "card_number";
     static final String F_CARD_EXP_MONTH = "card_exp_month";
     static final String F_CARD_EXP_YEAR = "card_exp_year";
@@ -56,7 +63,7 @@ public class Card {
      * @return {@code true} if valid, {@code false} otherwise.
      */
     public boolean isValid() {
-        return isValid(Calendar.getInstance());
+        return isValid(UTC);
     }
     
     /**
