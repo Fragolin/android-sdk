@@ -53,17 +53,17 @@
             android:inputType="date"
             android:maxLength="5"
             android:nextFocusLeft="@id/etCardNumber"
-            android:nextFocusRight="@+id/etCVV"
+            android:nextFocusRight="@+id/etCvc"
             android:nextFocusUp="@id/etCardNumber"
-            android:nextFocusDown="@+id/etCVV"
-            android:nextFocusForward="@+id/etCVV"
+            android:nextFocusDown="@+id/etCvc"
+            android:nextFocusForward="@+id/etCvc"
             android:textSize="36sp"
             android:visibility="visible"
             tools:ignore="UnusedAttribute"
             tools:importantForAccessibility="yes" />
 
         <com.tranzzo.android.sdk.view.CvcEditText
-            android:id="@+id/etCVV"
+            android:id="@+id/etCvc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
