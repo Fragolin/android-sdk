@@ -123,12 +123,11 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     }
     
     private Card collectCard() {
-        return
-                new Card(
-                        etCardNumber.getCardNumber(),
-                        etExpiration.getValidDateFields(),
-                        etCvc.getCvc()
-                );
+        return new Card(
+                etCardNumber.getCardNumber(),
+                etExpiration.getValidDateFields(),
+                etCvc.getCvc()
+        );
     }
     
     private void displayError(String text) {
@@ -145,8 +144,9 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         
         @Override
         protected TokenResult doInBackground(Card... cards) {
-            Tranzzo trz = Tranzzo.init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK");
-            return trz.tokenize(cards[0], getApplicationContext());
+            return Tranzzo
+                    .init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK")
+                    .tokenize(cards[0], getApplicationContext());
         }
         
         @Override

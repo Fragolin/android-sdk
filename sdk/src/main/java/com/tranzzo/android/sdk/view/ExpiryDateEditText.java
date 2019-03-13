@@ -68,7 +68,6 @@ public class ExpiryDateEditText extends TranzzoEditText {
      * if it is not
      */
     @Nullable
-    @Size(2)
     public ExpiryFields getValidDateFields() {
         if (!mIsDateValid) {
             return null;
