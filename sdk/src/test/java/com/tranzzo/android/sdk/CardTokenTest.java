@@ -32,8 +32,7 @@ public class CardTokenTest {
     }
     
     @Test
-    public void testParsingFromValidJSON() throws Exception{
-        CardToken actual = CardToken.fromJson(successJson);
-        assertEquals(cardToken, actual);
+    public void testParsingFromValidJSON() {
+        assertEquals(cardToken, CardToken.fromJson(successJson).value);
     }
 }

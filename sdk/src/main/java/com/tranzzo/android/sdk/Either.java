@@ -3,6 +3,8 @@ package com.tranzzo.android.sdk;
 import androidx.arch.core.util.Function;
 import androidx.core.util.Consumer;
 
+import java.util.concurrent.Callable;
+
 /**
  * Represents either successful result ({@link Either#value}) or formatted error ({@link Either#error}).
  * To check where result was successful use {@link #isSuccessful()}
@@ -22,9 +24,24 @@ public class Either<E, T> {
         return new Either<>(null, error);
     }
     
-    private Either(T value, E error) {
-        this.value = value;
-        this.error = error;
+    public static <T> Either<TrzError, T> wrap(Throwable ex) {
+        return failure(TrzError.mkInternal(ex.getMessage()));
+    }
+    
+    public static <T> Either<TrzError, T> wrap(Callable<T> program) {
+        try {
+            return Either.success(program.call());
+        } catch (Exception e) {
+            return Either.wrap(e);
+        }
+    }
+    
+    public static <T> Either<TrzError, T> lift(Callable<Either<TrzError, T>> program) {
+        try {
+            return program.call();
+        } catch (Exception e) {
+            return Either.wrap(e);
+        }
     }
     
     public <V> Either<E, V> flatMap(Function<T, Either<E, V>> f) {
@@ -41,6 +58,28 @@ public class Either<E, T> {
         } else {
             return Either.failure(this.error);
         }
+    }
+    
+    public <V> Either<V, T> mapLeft(Function<E, V> f) {
+        if (isSuccessful()) {
+            return Either.success(this.value);
+        } else {
+            return Either.failure(f.apply(this.error));
+        }
+    }
+    
+    public Either<E, T> peek(Consumer<T> f) {
+        if (isSuccessful()) {
+            f.accept(this.value);
+        }
+        return this;
+    }
+    
+    public Either<E, T> peekLeft(Consumer<E> f) {
+        if (!isSuccessful()) {
+            f.accept(this.error);
+        }
+        return this;
     }
     
     public <V> V fold(Function<E, V> onError, Function<T, V> onSuccess) {
@@ -61,6 +100,11 @@ public class Either<E, T> {
     
     public boolean isSuccessful() {
         return null == error;
+    }
+    
+    private Either(T value, E error) {
+        this.value = value;
+        this.error = error;
     }
     
     @Override

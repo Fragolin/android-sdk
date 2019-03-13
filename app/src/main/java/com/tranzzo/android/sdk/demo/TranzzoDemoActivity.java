@@ -60,7 +60,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                         c -> new TokenizeTask().execute(c)
                 );
             } else {
-                displayError("Something is invalid");
+                displayError(TrzError.mkInternal("Something is invalid"));
             }
         });
         btnTokenize.setEnabled(false);
@@ -118,13 +118,13 @@ public class TranzzoDemoActivity extends AppCompatActivity {
             if (cardInputListener.isFormValid()) {
                 displayResult("VALID");
             } else {
-                displayError("INVALID");
+                displayError(TrzError.mkInternal("INVALID"));
             }
         });
         
     }
     
-    private Either<String, Card> collectCard() {
+    private Either<TrzError, Card> collectCard() {
         return etCardNumber
                 .getCardNumber()
                 .flatMap(cardNumber ->
@@ -135,12 +135,13 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                                                 .getCvc()
                                                 .map(cvc -> new Card(cardNumber, expiry, cvc))
                                 )
-                );
+                )
+                .mapLeft(TrzError::mkInternal);
     }
     
-    private void displayError(String text) {
+    private void displayError(TrzError error) {
         tvResult.setTextColor(getResources().getColor(R.color.colorRed));
-        tvResult.setText(text);
+        tvResult.setText(error.message);
     }
     
     private void displayResult(String text) {
@@ -160,7 +161,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Either<TrzError, CardToken> result) {
             result.consume(
-                    e -> displayError(e.toString()),
+                    TranzzoDemoActivity.this::displayError,
                     token -> {
                         displayResult(token.toString());
                         Log.i("TOKEN", ">>> " + token.toString());

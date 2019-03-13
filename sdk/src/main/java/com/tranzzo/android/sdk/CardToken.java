@@ -2,10 +2,10 @@ package com.tranzzo.android.sdk;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.VisibleForTesting;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -31,13 +31,15 @@ public class CardToken {
         this.mask = mask;
     }
     
-    static CardToken fromJson(String successJson) throws JSONException, ParseException {
-        JSONObject json = new JSONObject(successJson);
-        return new CardToken(
-                json.getString("token"),
-                DATE_TIME_PARSER.parse(json.getString("expires_at")),
-                json.getString("card_mask")
-        );
+    static Either<TrzError, CardToken> fromJson(String successJson) {
+        return Either.wrap(() -> {
+            JSONObject json = new JSONObject(successJson);
+            return new CardToken(
+                    json.getString("token"),
+                    DATE_TIME_PARSER.parse(json.getString("expires_at")),
+                    json.getString("card_mask")
+            );
+        });
     }
     
     @Override

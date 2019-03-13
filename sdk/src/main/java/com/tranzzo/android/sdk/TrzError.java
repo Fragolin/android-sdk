@@ -27,19 +27,20 @@ public class TrzError {
      * }
      * </pre>
      *
-     * @param json JSON to parse
+     * @param jsonString JSON to parse
      * @return either parsed exception or generic one.
      */
-    static TrzError fromJson(JSONObject json) {
+    static TrzError fromJson(String jsonString) {
         try {
+            JSONObject json = new JSONObject(jsonString);
             return new TrzError(json.getString("id"), json.getString("error_message"));
         } catch (JSONException e) {
             e.printStackTrace();
-            return new TrzError("Unknown", Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + json.toString());
+            return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString);
         }
     }
     
-    static TrzError mkInternal(String message){
+    public static TrzError mkInternal(String message) {
         return new TrzError(UUID.randomUUID().toString(), message);
     }
     

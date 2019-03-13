@@ -7,6 +7,6 @@ import java.util.SortedMap;
 public interface TranzzoApi {
     
     @InternalApi
-    TrzResponse tokenize(SortedMap<String, ?> body, String apiToken);
+    Either<TrzError, String> tokenize(SortedMap<String, ?> body, String apiToken);
     
 }

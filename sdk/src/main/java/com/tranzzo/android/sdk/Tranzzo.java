@@ -7,9 +7,9 @@ import androidx.annotation.VisibleForTesting;
 import com.tranzzo.android.sdk.annotation.BetaApi;
 import com.tranzzo.android.sdk.annotation.InternalApi;
 import com.tranzzo.android.sdk.view.Card;
-import org.json.JSONObject;
 
-import java.util.*;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Entry point for Tranzzo SDK API.
@@ -62,37 +62,34 @@ public class Tranzzo {
      */
     @BetaApi
     public Either<TrzError, CardToken> tokenize(@NonNull final Card card, @NonNull final Context context) {
-        if (!card.isValid()) {
-            return Either.failure(TrzError.mkInternal("Attempt to tokenize invalid card."));
-        } else {
-            return doTokenize(card, context);
-        }
+        
+        Either<TrzError, CardToken> result = card.isValid() ? doTokenize(card, context) : invalidCard();
+        
+        return result.peekLeft(e -> {
+            log.error(OOPS_MESSAGE_INTERNAL);
+            log.error(e.toString());
+        });
         
     }
     
     private Either<TrzError, CardToken> doTokenize(@NonNull final Card card, @NonNull final Context context) {
-        try {
-            SortedMap<String, Object> data = new TreeMap<>(card.toMap());
-            data.putAll(telemetry.collect(context));
-            
-            log.debug("Request: " + data);
-            
-            TrzResponse response = api.tokenize(data, apiToken);
-            
-            if (response.success) {
-                log.debug("Response [success]: " + response);
-                return Either.success(CardToken.fromJson(response.body));
-            } else {
-                log.error("Response [failure]: " + response.body);
-                return Either.failure(TrzError.fromJson(new JSONObject(response.body)));
-            }
-            
-        } catch (Exception ex) {
-            String internalErrorId = UUID.randomUUID().toString();
-            log.error(OOPS_MESSAGE_INTERNAL + " Error id: " + internalErrorId, ex);
-            return Either.failure(new TrzError(internalErrorId, OOPS_MESSAGE_INTERNAL));
-        }
+        
+        SortedMap<String, Object> data = new TreeMap<>(card.toMap());
+        data.putAll(telemetry.collect(context));
+        
+        log.debug("Request: " + data);
+        
+        return api
+                .tokenize(data, apiToken)
+                .peek(body -> log.debug("Response [success]: " + body))
+                .flatMap(CardToken::fromJson)
+                .peekLeft(e -> log.error("Response [failure]: " + e));
+        
+        
     }
     
+    private <T> Either<TrzError, T> invalidCard(){
+        return Either.failure(TrzError.mkInternal("Attempt to tokenize invalid card."));
+    }
     
 }

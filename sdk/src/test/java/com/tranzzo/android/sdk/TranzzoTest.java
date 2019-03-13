@@ -17,6 +17,7 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricTestRunner.class)
 public class TranzzoTest {
     
+    private final String invalidJson = "{\"invalid\":\"json\"}";
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     
@@ -51,10 +52,8 @@ public class TranzzoTest {
     @Test
     public void returnTokenForSuccessfulResponse() throws Exception {
         checkCase(
-                true,
-                successJson,
+                Either.success(successJson),
                 (response, actual) -> {
-                    assertTrue(actual.isSuccessful());
                     assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.value);
                 }
         
@@ -65,12 +64,8 @@ public class TranzzoTest {
     @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForEmptyResponseJson() throws Exception {
         checkCase(
-                false,
-                "",
-                (response, actual) -> {
-                    assertFalse(actual.isSuccessful());
-                    assertEquals(Tranzzo.OOPS_MESSAGE_INTERNAL, actual.error.message);
-                }
+                Either.success(""),
+                (response, actual) -> assertEquals("End of input at character 0 of ", actual.error.message)
         
         );
     }
@@ -79,22 +74,19 @@ public class TranzzoTest {
     @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForInvalidResponseJson() throws Exception {
         checkCase(
-                false,
-                "{\"invalid\":\"json\"}",
+                Either.failure(TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson)),
                 (response, actual) -> {
-                    assertFalse(actual.isSuccessful());
-                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: {\"invalid\":\"json\"}", actual.error.message);
+                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson, actual.error.message);
                 }
         
         );
     }
     
     private void checkCase(
-            final boolean requestSuccess,
-            final String serverResponse,
-            final ThrowableBiConsumer<String, Either<TrzError, CardToken>> assertion
+            final Either<TrzError, String> serverResponse,
+            final ThrowableBiConsumer<Either<TrzError, String>, Either<TrzError, CardToken>> assertion
     ) throws Exception {
-        when(api.tokenize(requestParams, "")).thenReturn(new TrzResponse(requestSuccess, serverResponse));
+        when(api.tokenize(requestParams, "")).thenReturn(serverResponse);
         Either<TrzError, CardToken> actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
         assertion.accept(serverResponse, actual);
     }
