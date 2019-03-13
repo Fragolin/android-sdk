@@ -8,9 +8,6 @@ import java.security.*;
 import java.util.Map;
 import java.util.SortedMap;
 
-/**
- * @author Andrii Abramov on 3/4/19.
- */
 public class HmacSigner {
     
     private static final char[] HEX_ARRAY = "0123456789abcdef".toCharArray();
