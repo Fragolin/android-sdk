@@ -69,27 +69,28 @@ public class ExpiryDateEditText extends TranzzoEditText {
      */
     @Nullable
     @Size(2)
-    public int[] getValidDateFields() {
+    public ExpiryFields getValidDateFields() {
         if (!mIsDateValid) {
             return null;
         }
         
-        final int[] monthYearPair = new int[2];
+        int expMonth;
+        int expYear;
         final String rawNumericInput = getText().toString().replaceAll("/", "");
         final String[] dateFields = DateUtils.separateDateStringParts(rawNumericInput);
         
         try {
-            monthYearPair[0] = Integer.parseInt(dateFields[0]);
+            expMonth = Integer.parseInt(dateFields[0]);
             final int twoDigitYear = Integer.parseInt(dateFields[1]);
 //            final int fourDigitYear = DateUtils.convertTwoDigitYearToFour();
-            monthYearPair[1] = twoDigitYear;
+            expYear = twoDigitYear;
         } catch (NumberFormatException numEx) {
             // Given that the date should already be valid when getting to this method, we should
             // not his this exception. Returning null to indicate error if we do.
             return null;
         }
         
-        return monthYearPair;
+        return new ExpiryFields(expMonth, expYear);
     }
     
     public void addExpiryDateEditListener(ExpiryDateEditListener expiryDateEditListener) {

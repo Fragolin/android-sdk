@@ -18,17 +18,37 @@ public class Card {
     final String number;
     
     @VisibleForTesting
-    final int expMonth;
+    private final int expMonth;
     
     @VisibleForTesting
-    final int expYear;
+    private final int expYear;
     
     @VisibleForTesting
-    final String cvc;
+    private final String cvc;
     
     @NonNull
     @VisibleForTesting
-    final CardBrand brand;
+    private final CardBrand brand;
+    
+    public Card(
+            @Size(max = 19) String number,
+            @IntRange(from = 1, to = 12) int expMonth,
+            @IntRange(to = 99) int expYear,
+            @Size(min = 3, max = 4) String cvc) {
+        this.number = TranzzoTextUtils.nullIfBlank(CardUtils.normalizeCardNumber(number));
+        this.expMonth = expMonth;
+        this.expYear = expYear;
+        this.cvc = cvc.trim();
+        this.brand = CardBrand.fromNumber(number);
+    }
+    
+    public Card(
+            String number,
+            ExpiryFields expiry,
+            String cvc
+    ) {
+        this(number, expiry.expMonth, expiry.expYear, cvc);
+    }
     
     /**
      * Checks whether {@code this} represents a valid card.
@@ -95,26 +115,6 @@ public class Card {
             return false;
         }
         return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
-    }
-    
-    public Card(
-            @Size(max = 19) String number,
-            @IntRange(from = 1, to = 12) int expMonth,
-            @IntRange(to = 99) int expYear,
-            @Size(min = 3, max = 4) String cvc) {
-        this.number = TranzzoTextUtils.nullIfBlank(CardUtils.normalizeCardNumber(number));
-        this.expMonth = expMonth;
-        this.expYear = expYear;
-        this.cvc = cvc.trim();
-        this.brand = CardBrand.fromNumber(number);
-    }
-    
-    public Card(
-            String number,
-            int[] expFields,
-            String cvc
-    ) {
-        this(number, expFields[0], expFields[1], cvc);
     }
     
     public Map<String, Object> toMap() {
