@@ -1,5 +1,6 @@
 package com.tranzzo.android.sdk;
 
+import androidx.annotation.NonNull;
 import com.tranzzo.android.sdk.annotation.InternalApi;
 import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.util.HmacSigner;
@@ -18,13 +19,14 @@ class HttpTranzzoApi implements TranzzoApi {
     private final String baseUrl;
     private static final SSLSocketFactory SSL_SOCKET_FACTORY = new TranzzoSSLSocketFactory();
     
-    public HttpTranzzoApi(String baseUrl) {
+    HttpTranzzoApi(String baseUrl) {
         this.baseUrl = baseUrl;
     }
     
+    @NonNull
     @Override
     @InternalApi
-    public Either<TrzError, String> tokenize(SortedMap<String, ?> jsonParams, String apiToken) {
+    public Either<TrzError, String> tokenize(@NonNull final SortedMap<String, ?> jsonParams, @NonNull final String apiToken) {
         return Either.lift(() -> {
             HttpURLConnection conn = null;
             try {
