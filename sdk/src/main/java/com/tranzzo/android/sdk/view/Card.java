@@ -9,20 +9,26 @@ import java.util.*;
  */
 public class Card {
     
-    @Size(max = 19)
-    private final String number;
+    static final String F_CARD_NUMBER = "card_number";
+    static final String F_CARD_EXP_MONTH = "card_exp_month";
+    static final String F_CARD_EXP_YEAR = "card_exp_year";
+    static final String F_CARD_CVC = "card_cvv";
     
-    @IntRange(from = 1, to = 12)
-    private final int expMonth;
+    @VisibleForTesting
+    final String number;
     
-    @IntRange(to = 99)
-    private final int expYear;
+    @VisibleForTesting
+    final int expMonth;
     
-    @Size(max = 4)
-    private final String cvc;
+    @VisibleForTesting
+    final int expYear;
+    
+    @VisibleForTesting
+    final String cvc;
     
     @NonNull
-    private final CardBrand brand;
+    @VisibleForTesting
+    final CardBrand brand;
     
     /**
      * Checks whether {@code this} represents a valid card.
@@ -57,17 +63,12 @@ public class Card {
      *
      * @return {@code true} if valid, {@code false} otherwise
      */
-    public boolean validateCVC() {
+    public boolean validateCvc() {
         if (TranzzoTextUtils.isBlank(cvc)) {
             return false;
         }
         String cvcValue = cvc.trim();
-        boolean validLength =
-                (brand == null && cvcValue.length() >= 3 && cvcValue.length() <= 4)
-                        || (brand == CardBrand.AMERICAN_EXPRESS && cvcValue.length() == 4)
-                        || cvcValue.length() == 3;
-        
-        return ModelUtils.isWholePositiveNumber(cvcValue) && validLength;
+        return ModelUtils.isWholePositiveNumber(cvcValue) && cvcValue.length() == brand.cvvLength;
     }
     
     public boolean validateExpMonth() {
@@ -82,7 +83,7 @@ public class Card {
         if (cvc == null) {
             return validateNumber() && validateExpiryDate(now);
         } else {
-            return validateNumber() && validateExpiryDate(now) && validateCVC();
+            return validateNumber() && validateExpiryDate(now) && validateCvc();
         }
     }
     
@@ -96,24 +97,32 @@ public class Card {
         return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
     }
     
-    public Card(String number, int expMonth, int expYear, String cvc) {
+    public Card(
+            @Size(max = 19) String number,
+            @IntRange(from = 1, to = 12) int expMonth,
+            @IntRange(to = 99) int expYear,
+            @Size(min = 3, max = 4) String cvc) {
         this.number = TranzzoTextUtils.nullIfBlank(CardUtils.normalizeCardNumber(number));
         this.expMonth = expMonth;
         this.expYear = expYear;
-        this.cvc = cvc;
+        this.cvc = cvc.trim();
         this.brand = CardBrand.fromNumber(number);
     }
     
-    public Card(String number, int[] expFields, String cvc) {
+    public Card(
+            String number,
+            int[] expFields,
+            String cvc
+    ) {
         this(number, expFields[0], expFields[1], cvc);
     }
     
     public Map<String, Object> toMap() {
         return new TreeMap<String, Object>() {{
-            put("card_number", number);
-            put("card_exp_month", expMonth);
-            put("card_exp_year", expYear);
-            put("card_cvv", cvc);
+            put(F_CARD_NUMBER, number);
+            put(F_CARD_EXP_MONTH, expMonth);
+            put(F_CARD_EXP_YEAR, expYear);
+            put(F_CARD_CVC, cvc);
         }};
     }
     
