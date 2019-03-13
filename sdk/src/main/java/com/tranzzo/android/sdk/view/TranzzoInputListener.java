@@ -31,12 +31,7 @@ public class TranzzoInputListener implements
         expiryInput.addExpiryDateEditListener(this);
         cvcInput.addCvcInputListener(this);
         
-        this.isFormValidProgram = new SafeCallable<Boolean>() {
-            @Override
-            public Boolean call() {
-                return cardInput.isCardNumberValid() && expiryInput.isDateValid() && cvcInput.isCvcValid();
-            }
-        };
+        this.isFormValidProgram = () -> cardInput.isCardNumberValid() && expiryInput.isDateValid() && cvcInput.isCvcValid();
         
         this.listener = listener;
     }
@@ -83,6 +78,7 @@ public class TranzzoInputListener implements
         void onInputCompleted();
     }
     
+    @FunctionalInterface
     private interface SafeCallable<V> {
         V call();
     }

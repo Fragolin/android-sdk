@@ -5,13 +5,11 @@ group 'com.tranzzo.android.sdk'
 
 android {
     compileSdkVersion 28
-
     testOptions {
         unitTests {
             includeAndroidResources = true
         }
     }
-
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 28
@@ -21,7 +19,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -36,8 +33,10 @@ android {
     compileOptions {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    buildToolsVersion '28.0.3'
 }
 
 dependencies {

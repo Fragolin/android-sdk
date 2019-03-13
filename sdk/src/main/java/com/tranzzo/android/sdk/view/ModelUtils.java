@@ -12,6 +12,13 @@ import java.util.Locale;
 class ModelUtils {
     
     /**
+     * Check where month valud is valid. Allowed values are [1-12] inclusively.
+     */
+    static boolean isValidMonth(int month) {
+        return month >= 1 && month <= 12;
+    }
+    
+    /**
      * Check to see whether the input string is a whole, positive number.
      *
      * @param value the input string to test

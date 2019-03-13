@@ -1,20 +1,20 @@
 package com.tranzzo.android.sdk.demo;
 
+import android.view.View;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 import com.tranzzo.android.sdk.view.CardUtils;
+import org.hamcrest.Matcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.clearText;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.action.ViewActions.*;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static com.tranzzo.android.sdk.demo.EspressoTestsMatchers.withDrawable;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 /**
@@ -92,10 +92,8 @@ public class TranzzoDemoActivityTest {
     @Test
     public void rejectToTokenizeInvalidCard_number() {
         onView(withId(R.id.btnFillWrong)).perform(click());
-        onView(withId(R.id.btnTokenize)).perform(click());
     
-        onView(withId(R.id.tvResult))
-                .check(matches(withText("Something is invalid")));
+        onView(withId(R.id.btnTokenize)).check(matches(isDisabled()));
     }
     
     @Test
@@ -105,11 +103,8 @@ public class TranzzoDemoActivityTest {
         onView(withId(R.id.etExpiration))
                 .perform(clearText())
                 .perform(typeText("11/10"));
-        
-        onView(withId(R.id.btnTokenize)).perform(click());
     
-        onView(withId(R.id.tvResult))
-                .check(matches(withText("Something is invalid")));
+        onView(withId(R.id.btnTokenize)).check(matches(isDisabled()));
     }
     
     @Test
@@ -120,12 +115,12 @@ public class TranzzoDemoActivityTest {
                 .perform(clearText())
                 .perform(typeText("13/10"));
         
-        onView(withId(R.id.btnTokenize)).perform(click());
-    
-        onView(withId(R.id.tvResult))
-                .check(matches(withText("Something is invalid")));
+        onView(withId(R.id.btnTokenize)).check(matches(isDisabled()));
     }
     
+    private Matcher<View> isDisabled(){
+        return not(isEnabled());
+    }
     
     
 }

@@ -9,20 +9,17 @@ import java.util.*;
  */
 public class Card {
     
-    public static final int CVC_LENGTH_AMERICAN_EXPRESS = 4;
-    public static final int CVC_LENGTH_COMMON = 3;
-    
     @Size(max = 19)
     private final String number;
     
-    @Size(max = 4)
-    private final String cvc;
-    
     @IntRange(from = 1, to = 12)
-    private final Integer expMonth;
+    private final int expMonth;
     
     @IntRange(to = 99)
-    private final Integer expYear;
+    private final int expYear;
+    
+    @Size(max = 4)
+    private final String cvc;
     
     @NonNull
     private final CardBrand brand;
@@ -74,11 +71,11 @@ public class Card {
     }
     
     public boolean validateExpMonth() {
-        return expMonth != null && expMonth >= 1 && expMonth <= 12;
+        return ModelUtils.isValidMonth(expMonth);
     }
     
     public boolean validateExpYear(Calendar now) {
-        return expYear != null && !ModelUtils.hasYearPassed(expYear, now);
+        return !ModelUtils.hasYearPassed(expYear, now);
     }
     
     boolean isValid(@NonNull Calendar now) {
@@ -99,12 +96,16 @@ public class Card {
         return !ModelUtils.hasMonthPassed(expYear, expMonth, now);
     }
     
-    public Card(String number, Integer expMonth, Integer expYear, String cvc) {
+    public Card(String number, int expMonth, int expYear, String cvc) {
         this.number = TranzzoTextUtils.nullIfBlank(CardUtils.normalizeCardNumber(number));
         this.expMonth = expMonth;
         this.expYear = expYear;
         this.cvc = cvc;
         this.brand = CardBrand.fromNumber(number);
+    }
+    
+    public Card(String number, int[] expFields, String cvc) {
+        this(number, expFields[0], expFields[1], cvc);
     }
     
     public Map<String, Object> toMap() {

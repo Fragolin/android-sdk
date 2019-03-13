@@ -52,16 +52,10 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
-    
         ButterKnife.bind(this);
         
         btnTokenize.setOnClickListener(v -> {
-            
-            boolean valid = etCardNumber.isCardNumberValid() &&
-                    etExpiration.isDateValid() &&
-                    etCvc.isCvcValid();
-            
-            if (valid) {
+            if (cardInputListener.isFormValid()) {
                 new TokenizeTask().execute(collectCard());
             } else {
                 displayError("Something is invalid");
@@ -132,8 +126,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         return
                 new Card(
                         etCardNumber.getCardNumber(),
-                        etExpiration.getValidDateFields()[0],
-                        etExpiration.getValidDateFields()[1],
+                        etExpiration.getValidDateFields(),
                         etCvc.getCvc()
                 );
     }
