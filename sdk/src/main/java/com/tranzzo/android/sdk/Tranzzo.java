@@ -53,20 +53,20 @@ public class Tranzzo {
      *
      * @param card    card to tokenize
      * @param context application context
-     * @return either successful {@link CardToken} result or {@link TrzError} inside {@link TokenResult}
+     * @return either successful {@link CardToken} result or {@link TrzError} inside {@link Outcome}
      * @see Card#isValid()
-     * @see TokenResult#isSuccessful()
+     * @see Outcome#isSuccessful()
      */
-    public TokenResult tokenize(@NonNull final Card card, @NonNull final Context context) {
+    public Outcome<CardToken> tokenize(@NonNull final Card card, @NonNull final Context context) {
         if (!card.isValid()) {
-            return TokenResult.failure(TrzError.mkInternal("Attempt to tokenize invalid card."));
+            return Outcome.failure(TrzError.mkInternal("Attempt to tokenize invalid card."));
         } else {
             return doTokenize(card, context);
         }
         
     }
     
-    private TokenResult doTokenize(@NonNull final Card card, @NonNull final Context context) {
+    private Outcome<CardToken> doTokenize(@NonNull final Card card, @NonNull final Context context) {
         try {
             SortedMap<String, Object> data = new TreeMap<>(card.toMap());
             data.putAll(telemetry.collect(context));
@@ -77,16 +77,16 @@ public class Tranzzo {
             
             if (response.success) {
                 log.debug("Response [success]: " + response);
-                return TokenResult.success(CardToken.fromJson(response.body));
+                return Outcome.success(CardToken.fromJson(response.body));
             } else {
                 log.error("Response [failure]: " + response.body);
-                return TokenResult.failure(TrzError.fromJson(new JSONObject(response.body)));
+                return Outcome.failure(TrzError.fromJson(new JSONObject(response.body)));
             }
             
         } catch (Exception ex) {
             String internalErrorId = UUID.randomUUID().toString();
             log.error(OOPS_MESSAGE_INTERNAL + " Error id: " + internalErrorId, ex);
-            return TokenResult.failure(new TrzError(internalErrorId, OOPS_MESSAGE_INTERNAL));
+            return Outcome.failure(new TrzError(internalErrorId, OOPS_MESSAGE_INTERNAL));
         }
     }
     

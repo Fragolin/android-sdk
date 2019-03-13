@@ -63,7 +63,7 @@ public class CardToken {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("CardToken{");
-        sb.append("token='").append(token).append('\'');
+        sb.append("value='").append(token).append('\'');
         sb.append(", expiresAt=").append(expiresAt);
         sb.append(", mask='").append(mask).append('\'');
         sb.append('}');

@@ -7,8 +7,7 @@ import android.widget.*;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.tranzzo.android.sdk.TokenResult;
-import com.tranzzo.android.sdk.Tranzzo;
+import com.tranzzo.android.sdk.*;
 import com.tranzzo.android.sdk.view.*;
 
 public class TranzzoDemoActivity extends AppCompatActivity {
@@ -140,23 +139,23 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         tvResult.setText(text);
     }
     
-    private class TokenizeTask extends AsyncTask<Card, Void, TokenResult> {
+    private class TokenizeTask extends AsyncTask<Card, Void, Outcome<CardToken>> {
         
         @Override
-        protected TokenResult doInBackground(Card... cards) {
+        protected Outcome<CardToken> doInBackground(Card... cards) {
             return Tranzzo
                     .init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK")
                     .tokenize(cards[0], getApplicationContext());
         }
         
         @Override
-        protected void onPostExecute(TokenResult cardToken) {
-            if (cardToken.isSuccessful()) {
-                displayResult(cardToken.token.toString());
+        protected void onPostExecute(Outcome<CardToken> token) {
+            if (token.isSuccessful()) {
+                displayResult(token.value.toString());
                 
-                Log.i("TOKEN", ">>> " + cardToken.token.toString());
+                Log.i("TOKEN", ">>> " + token.value.toString());
             } else {
-                displayError(cardToken.error.toString());
+                displayError(token.error.toString());
             }
         }
     }

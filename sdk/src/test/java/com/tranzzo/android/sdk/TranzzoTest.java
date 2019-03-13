@@ -55,7 +55,7 @@ public class TranzzoTest {
                 successJson,
                 (response, actual) -> {
                     assertTrue(actual.isSuccessful());
-                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.token);
+                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.value);
                 }
         
         );
@@ -92,10 +92,10 @@ public class TranzzoTest {
     private void checkCase(
             final boolean requestSuccess,
             final String serverResponse,
-            final ThrowableBiConsumer<String, TokenResult> assertion
+            final ThrowableBiConsumer<String, Outcome<CardToken>> assertion
     ) throws Exception {
         when(api.tokenize(requestParams, "")).thenReturn(new TrzResponse(requestSuccess, serverResponse));
-        TokenResult actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
+        Outcome<CardToken> actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
         assertion.accept(serverResponse, actual);
     }
     
