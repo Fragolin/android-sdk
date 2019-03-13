@@ -12,7 +12,11 @@ import java.math.MathContext;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-final class TelemetryUtils implements TelemetryProvider {
+final class AndroidTelemetryProvider implements TelemetryProvider {
+    
+    static final TelemetryProvider INSTANCE = new AndroidTelemetryProvider();
+    
+    private AndroidTelemetryProvider(){}
     
     @NonNull
     @Override

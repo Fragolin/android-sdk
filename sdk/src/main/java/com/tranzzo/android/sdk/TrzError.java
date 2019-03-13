@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import java.util.UUID;
 
 public class TrzError {
+    
     public final String id;
     public final String message;
     

@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import androidx.annotation.*;
-import com.tranzzo.android.sdk.R;
+import com.tranzzo.android.sdk.*;
 
 import java.util.*;
 
@@ -57,22 +57,16 @@ public class CardNumberEditText extends TranzzoEditText {
     
     /**
      * Gets a usable form of the card number. If the text is "4242 4242 4242 4242", this
-     * method will return "4242424242424242". If the card number is invalid, this returns
-     * {@code null}.
+     * method will return "4242424242424242".
      *
-     * @return a space-free version of the card number, or {@code null} if the number is invalid
+     * @return either an error or a space-free version of the card number
      */
-    @Nullable
-    public String getCardNumber() {
+    @NonNull
+    public Either<String, String> getCardNumber() {
         return mIsCardNumberValid
-                ? TranzzoTextUtils.removeSpacesAndHyphens(getText().toString())
-                : null;
+                ? Either.success(TranzzoTextUtils.removeSpacesAndHyphens(getText().toString()))
+                : Either.failure("Invalid card number");
     }
-    
-    public int getLengthMax() {
-        return mLengthMax;
-    }
-    
     
     @Override
     public void onInitializeAccessibilityNodeInfo(@NonNull AccessibilityNodeInfo info) {

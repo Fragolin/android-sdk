@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import androidx.annotation.*;
+import com.tranzzo.android.sdk.Either;
 import com.tranzzo.android.sdk.R;
 
 import java.util.ArrayList;
@@ -67,10 +68,10 @@ public class ExpiryDateEditText extends TranzzoEditText {
      * @return an {@code int} array of the form {month, year} if the date is valid, or {@code null}
      * if it is not
      */
-    @Nullable
-    public ExpiryFields getValidDateFields() {
+    @NonNull
+    public Either<String, ExpiryFields> getValidDateFields() {
         if (!mIsDateValid) {
-            return null;
+            return Either.failure("Invalid expiry");
         }
         
         int expMonth;
@@ -80,16 +81,14 @@ public class ExpiryDateEditText extends TranzzoEditText {
         
         try {
             expMonth = Integer.parseInt(dateFields[0]);
-            final int twoDigitYear = Integer.parseInt(dateFields[1]);
-//            final int fourDigitYear = DateUtils.convertTwoDigitYearToFour();
-            expYear = twoDigitYear;
+            expYear = Integer.parseInt(dateFields[1]);
         } catch (NumberFormatException numEx) {
             // Given that the date should already be valid when getting to this method, we should
             // not his this exception. Returning null to indicate error if we do.
-            return null;
+            return Either.failure("Invalid expiry");
         }
         
-        return new ExpiryFields(expMonth, expYear);
+        return Either.success(new ExpiryFields(expMonth, expYear));
     }
     
     public void addExpiryDateEditListener(ExpiryDateEditListener expiryDateEditListener) {

@@ -1,6 +1,7 @@
 package com.tranzzo.android.sdk;
 
 import android.util.Log;
+import com.tranzzo.android.sdk.annotation.InternalApi;
 import com.tranzzo.android.sdk.util.HmacSigner;
 import org.json.JSONObject;
 
@@ -22,6 +23,7 @@ class HttpTranzzoApi implements TranzzoApi {
     }
     
     @Override
+    @InternalApi
     public TrzResponse tokenize(SortedMap<String, ?> jsonParams, String apiToken) {
         
         HttpURLConnection conn = null;

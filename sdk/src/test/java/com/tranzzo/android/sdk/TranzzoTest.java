@@ -92,10 +92,10 @@ public class TranzzoTest {
     private void checkCase(
             final boolean requestSuccess,
             final String serverResponse,
-            final ThrowableBiConsumer<String, Outcome<CardToken>> assertion
+            final ThrowableBiConsumer<String, Either<TrzError, CardToken>> assertion
     ) throws Exception {
         when(api.tokenize(requestParams, "")).thenReturn(new TrzResponse(requestSuccess, serverResponse));
-        Outcome<CardToken> actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
+        Either<TrzError, CardToken> actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
         assertion.accept(serverResponse, actual);
     }
     

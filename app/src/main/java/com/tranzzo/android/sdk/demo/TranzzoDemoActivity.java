@@ -55,7 +55,10 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         
         btnTokenize.setOnClickListener(v -> {
             if (cardInputListener.isFormValid()) {
-                new TokenizeTask().execute(collectCard());
+                collectCard().consume(
+                        this::displayError,
+                        c -> new TokenizeTask().execute(c)
+                );
             } else {
                 displayError("Something is invalid");
             }
@@ -121,12 +124,18 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         
     }
     
-    private Card collectCard() {
-        return new Card(
-                etCardNumber.getCardNumber(),
-                etExpiration.getValidDateFields(),
-                etCvc.getCvc()
-        );
+    private Either<String, Card> collectCard() {
+        return etCardNumber
+                .getCardNumber()
+                .flatMap(cardNumber ->
+                        etExpiration
+                                .getValidDateFields()
+                                .flatMap(expiry ->
+                                        etCvc
+                                                .getCvc()
+                                                .map(cvc -> new Card(cardNumber, expiry, cvc))
+                                )
+                );
     }
     
     private void displayError(String text) {
@@ -139,24 +148,23 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         tvResult.setText(text);
     }
     
-    private class TokenizeTask extends AsyncTask<Card, Void, Outcome<CardToken>> {
+    private class TokenizeTask extends AsyncTask<Card, Void, Either<TrzError, CardToken>> {
         
         @Override
-        protected Outcome<CardToken> doInBackground(Card... cards) {
+        protected Either<TrzError, CardToken> doInBackground(Card... cards) {
             return Tranzzo
                     .init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK")
                     .tokenize(cards[0], getApplicationContext());
         }
         
         @Override
-        protected void onPostExecute(Outcome<CardToken> token) {
-            if (token.isSuccessful()) {
-                displayResult(token.value.toString());
-                
-                Log.i("TOKEN", ">>> " + token.value.toString());
-            } else {
-                displayError(token.error.toString());
-            }
+        protected void onPostExecute(Either<TrzError, CardToken> result) {
+            result.consume(
+                    e -> displayError(e.toString()),
+                    token -> {
+                        displayResult(token.toString());
+                        Log.i("TOKEN", ">>> " + token.toString());
+                    });
         }
     }
     

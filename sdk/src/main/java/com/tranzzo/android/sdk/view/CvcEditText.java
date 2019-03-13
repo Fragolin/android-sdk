@@ -1,10 +1,12 @@
 package com.tranzzo.android.sdk.view;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import androidx.annotation.NonNull;
+import com.tranzzo.android.sdk.Either;
 import com.tranzzo.android.sdk.R;
 
 import java.util.ArrayList;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * An {@link EditText} that handles putting numbers around a central divider character.
+ * An {@link EditText} that handles CVC input.
  */
 public class CvcEditText extends TranzzoEditText {
     
@@ -23,16 +25,19 @@ public class CvcEditText extends TranzzoEditText {
     
     public CvcEditText(Context context) {
         super(context);
+        setupView();
         listenForTextChanges();
     }
     
     public CvcEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setupView();
         listenForTextChanges();
     }
     
     public CvcEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setupView();
         listenForTextChanges();
     }
     
@@ -57,12 +62,21 @@ public class CvcEditText extends TranzzoEditText {
         return mIsCvcValid;
     }
     
-    public String getCvc(){
-        return getText().toString();
+    @NonNull
+    public Either<String, String> getCvc(){
+        if (!mIsCvcValid){
+            return Either.failure("Invalid CVC value");
+        } else {
+            return Either.success(getText().toString());
+        }
     }
     
     public void addCvcInputListener(CvcInputListener mCvcInputListener) {
         this.mCvcInputListeners.add(mCvcInputListener);
+    }
+    
+    private void setupView(){
+        setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     }
     
     private void listenForTextChanges() {
