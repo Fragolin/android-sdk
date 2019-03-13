@@ -7,6 +7,7 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import androidx.annotation.*;
 import com.tranzzo.android.sdk.*;
+import com.tranzzo.android.sdk.util.Either;
 
 import java.util.*;
 

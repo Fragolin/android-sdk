@@ -1,6 +1,7 @@
 package com.tranzzo.android.sdk;
 
 import com.tranzzo.android.sdk.annotation.InternalApi;
+import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.util.HmacSigner;
 import org.json.JSONObject;
 

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.tranzzo.android.sdk.*;
+import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.*;
 
 public class TranzzoDemoActivity extends AppCompatActivity {

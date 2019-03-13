@@ -2,6 +2,7 @@ package com.tranzzo.android.sdk;
 
 import android.annotation.SuppressLint;
 import androidx.annotation.VisibleForTesting;
+import com.tranzzo.android.sdk.util.Either;
 import org.json.JSONObject;
 
 import java.text.DateFormat;

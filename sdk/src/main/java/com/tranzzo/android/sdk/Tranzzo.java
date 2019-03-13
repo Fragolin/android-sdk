@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.tranzzo.android.sdk.annotation.BetaApi;
 import com.tranzzo.android.sdk.annotation.InternalApi;
+import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.Card;
 
 import java.util.SortedMap;

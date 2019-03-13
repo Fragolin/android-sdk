@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
+import java.util.Calendar;
 import java.util.TreeMap;
 
 import static com.tranzzo.android.sdk.view.Card.*;
@@ -30,7 +31,28 @@ public class CardTest {
     }
     
     @Test
-    public void isValid_true() {
+    public void cvcShouldBeNormalized() {
+        assertEquals(
+                new Card(validNumberRaw, expMonth, expYear, "  000  ").cvc,
+                cvc
+        );
+    }
+    
+    @Test
+    public void shouldBeConstructedProperlyFromExpiry() {
+        Card underTest = new Card(validNumberRaw, new ExpiryFields(expMonth, expYear), cvc);
+        assertEquals(
+                underTest.expMonth,
+                expMonth
+        );
+        assertEquals(
+                underTest.expYear,
+                expYear
+        );
+    }
+    
+    @Test
+    public void shouldBeProperlyValidated() {
         assertTrue(validCard.isValid());
     }
     
@@ -47,6 +69,16 @@ public class CardTest {
     @Test
     public void validateCvc() {
         assertTrue(validCard.validateCvc());
+    }
+    
+    @Test
+    public void validateExpMonth() {
+        assertTrue(validCard.validateExpMonth());
+    }
+    
+    @Test
+    public void validateExpYear() {
+        assertTrue(validCard.validateExpYear(Calendar.getInstance()));
     }
     
     @Test

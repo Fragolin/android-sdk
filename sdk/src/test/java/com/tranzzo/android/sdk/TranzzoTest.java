@@ -1,5 +1,6 @@
 package com.tranzzo.android.sdk;
 
+import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.Card;
 import org.junit.*;
 import org.junit.runner.RunWith;

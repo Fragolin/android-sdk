@@ -25,13 +25,13 @@ public class Card {
     final String number;
     
     @VisibleForTesting
-    private final int expMonth;
+    final int expMonth;
     
     @VisibleForTesting
-    private final int expYear;
+    final int expYear;
     
     @VisibleForTesting
-    private final String cvc;
+    final String cvc;
     
     @NonNull
     @VisibleForTesting

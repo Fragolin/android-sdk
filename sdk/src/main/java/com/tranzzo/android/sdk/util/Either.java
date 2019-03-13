@@ -1,7 +1,8 @@
-package com.tranzzo.android.sdk;
+package com.tranzzo.android.sdk.util;
 
 import androidx.arch.core.util.Function;
 import androidx.core.util.Consumer;
+import com.tranzzo.android.sdk.TrzError;
 
 import java.util.concurrent.Callable;
 
@@ -42,6 +43,19 @@ public class Either<E, T> {
         } catch (Exception e) {
             return Either.wrap(e);
         }
+    }
+    
+    /**
+     * UNSAFE API.
+     * <p>
+     * Consider using {@link #fold(Function, Function)} or which {@link #consume(Consumer, Consumer)} force error handling.
+     *
+     * @return either value or {@literal null} if result was unsuccessful.
+     * @see #fold(Function, Function)
+     * @see #consume(Consumer, Consumer)
+     */
+    public T getOrNull() {
+        return this.value;
     }
     
     public <V> Either<E, V> flatMap(Function<T, Either<E, V>> f) {
