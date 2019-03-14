@@ -86,13 +86,11 @@ public class Tranzzo {
         SortedMap<String, Object> data = new TreeMap<>(card.toMap());
         data.putAll(telemetry.collect(context));
         
-        log.debug("Request: " + data);
-        
         return api
                 .tokenize(data, apiToken)
-                .peek(body -> log.debug("Response [success]: " + body))
-                .flatMap(CardToken::fromJson)
-                .peekLeft(e -> log.error("Response [failure]: " + e));
+                .peek(body -> log.trace("Response [success]: " + body))
+                .peekLeft(e -> log.trace("Response [failure]: " + e))
+                .flatMap(CardToken::fromJson);
         
         
     }

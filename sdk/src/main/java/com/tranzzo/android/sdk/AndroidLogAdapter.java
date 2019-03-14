@@ -7,6 +7,12 @@ class AndroidLogAdapter implements Log {
     private AndroidLogAdapter(){}
     
     @Override
+    public void trace(String message) {
+        if (BuildConfig.DEBUG)
+            debug(message);
+    }
+    
+    @Override
     public void error(String message, Throwable ex) {
         android.util.Log.e("Tranzzo", message, ex);
     }
