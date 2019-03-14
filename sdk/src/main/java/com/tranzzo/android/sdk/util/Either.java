@@ -14,8 +14,8 @@ import java.util.concurrent.Callable;
  */
 public class Either<E, T> {
     
-    public final T value;
-    public final E error;
+    private final T value;
+    private final E error;
     
     public static <E, T> Either<E, T> success(final T value) {
         return new Either<>(value, null);
@@ -48,7 +48,7 @@ public class Either<E, T> {
     /**
      * UNSAFE API.
      * <p>
-     * Consider using {@link #fold(Function, Function)} or which {@link #consume(Consumer, Consumer)} force error handling.
+     * Consider using {@link #fold(Function, Function)} or {@link #consume(Consumer, Consumer)} which force error handling.
      *
      * @return either value or {@literal null} if result was unsuccessful.
      * @see #fold(Function, Function)
@@ -56,6 +56,19 @@ public class Either<E, T> {
      */
     public T getOrNull() {
         return this.value;
+    }
+    
+    /**
+     * UNSAFE API.
+     * <p>
+     * Consider using {@link #fold(Function, Function)} or {@link #consume(Consumer, Consumer)} which force error handling.
+     *
+     * @return either error or {@literal null} if result was successful.
+     * @see #fold(Function, Function)
+     * @see #consume(Consumer, Consumer)
+     */
+    public E errorOrNull() {
+        return this.error;
     }
     
     public <V> Either<E, V> flatMap(Function<T, Either<E, V>> f) {
