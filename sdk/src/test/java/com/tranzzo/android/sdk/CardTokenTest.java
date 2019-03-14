@@ -33,6 +33,6 @@ public class CardTokenTest {
     
     @Test
     public void testParsingFromValidJSON() {
-        assertEquals(cardToken, CardToken.fromJson(successJson).value);
+        assertEquals(cardToken, CardToken.fromJson(successJson).valueOrNull());
     }
 }
