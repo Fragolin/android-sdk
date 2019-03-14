@@ -1,0 +1,62 @@
+apply plugin: 'com.android.library'
+
+version '0.0.1'
+
+android {
+
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "tranzzo-sdk-${variant.name}-${version}.aar"
+        }
+    }
+
+    compileSdkVersion 28
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget.tranzzo.com\"")
+        }
+        debug {
+            buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget-stg.tranzzo.com\"")
+        }
+    }
+    compileOptions {
+        sourceCompatibility = '1.8'
+        targetCompatibility = '1.8'
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '28.0.3'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.25.0'
+    testImplementation 'org.robolectric:robolectric:4.2'
+    testImplementation 'androidx.test:core:1.1.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:core:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1-alpha02'
+    androidTestImplementation 'androidx.test:runner:1.1.2-alpha02'
+    androidTestImplementation 'androidx.test:rules:1.1.2-alpha02'
+    androidTestImplementation 'org.mockito:mockito-core:2.25.0'
+}

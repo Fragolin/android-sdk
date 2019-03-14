@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16sp"
+    tools:context=".TranzzoDemoActivity">
+
+    <com.tranzzo.android.sdk.view.CardNumberEditText
+        android:id="@+id/etCardNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginBottom="16sp"
+        android:accessibilityTraversalBefore="@+id/etExpiration"
+        android:background="@android:color/transparent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="center"
+        android:hint="@string/card_number_hint"
+        android:imeOptions="actionNext"
+        android:inputType="number"
+        android:maxLength="19"
+        android:nextFocusRight="@+id/etExpiration"
+        android:nextFocusDown="@+id/etExpiration"
+        android:nextFocusForward="@+id/etExpiration"
+        android:textSize="36sp"
+        android:visibility="visible"
+        tools:ignore="UnusedAttribute"
+        tools:importantForAccessibility="yes" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16sp"
+        android:orientation="horizontal">
+
+        <com.tranzzo.android.sdk.view.ExpiryDateEditText
+            android:id="@+id/etExpiration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:accessibilityTraversalAfter="@+id/etExpiration"
+            android:accessibilityTraversalBefore="@id/etCardNumber"
+            android:background="@android:color/transparent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:hint="@string/expiry_hint"
+            android:imeOptions="actionNext"
+            android:inputType="date"
+            android:maxLength="5"
+            android:nextFocusLeft="@id/etCardNumber"
+            android:nextFocusRight="@+id/etCvc"
+            android:nextFocusUp="@id/etCardNumber"
+            android:nextFocusDown="@+id/etCvc"
+            android:nextFocusForward="@+id/etCvc"
+            android:textSize="36sp"
+            android:visibility="visible"
+            tools:ignore="UnusedAttribute"
+            tools:importantForAccessibility="yes" />
+
+        <com.tranzzo.android.sdk.view.CvcEditText
+            android:id="@+id/etCvc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:accessibilityTraversalAfter="@+id/etExpiration"
+            android:background="@android:color/transparent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:hint="@string/cvc_number_hint"
+            android:imeOptions="actionDone"
+            android:inputType="numberPassword"
+            android:maxLength="4"
+            android:nextFocusLeft="@id/etExpiration"
+            android:nextFocusUp="@id/etExpiration"
+            android:textSize="36sp"
+            tools:ignore="UnusedAttribute"
+            tools:importantForAccessibility="yes" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnTokenize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="TOKENIZE" />
+
+
+        <ImageView
+            android:id="@+id/imgBrand"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:contentDescription="Card brand"
+            android:src="@drawable/ic_unknown" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFillDefault"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="3"
+            android:text="FILL DEFAULT" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFillWrong"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="3"
+            android:text="FILL WRONG" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnClearInputs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="CLEAR" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCheckFormValid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:text="CHECK FORM IS VALID" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16sp">
+
+        <TextView
+            android:id="@+id/tvResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Card brand?"
+            android:textSize="18sp"
+            tools:text="Card brand?" />
+
+        <TextView
+            android:id="@+id/tvBrand"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Result will be displayed here"
+            android:textSize="18sp"
+            tools:text="Result will be here" />
+
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
