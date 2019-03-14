@@ -6,7 +6,7 @@ import com.tranzzo.android.sdk.util.Either;
 
 import java.util.SortedMap;
 
-public interface TranzzoApi {
+interface TranzzoApi {
     
     @InternalApi
     @NonNull
