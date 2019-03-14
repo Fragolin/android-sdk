@@ -55,7 +55,7 @@ public class TranzzoTest {
         checkCase(
                 Either.success(successJson),
                 (response, actual) -> {
-                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.value);
+                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.valueOrNull());
                 }
         
         );
@@ -66,7 +66,7 @@ public class TranzzoTest {
     public void returnAnErrorForEmptyResponseJson() throws Exception {
         checkCase(
                 Either.success(""),
-                (response, actual) -> assertEquals("End of input at character 0 of ", actual.error.message)
+                (response, actual) -> assertEquals("End of input at character 0 of ", actual.errorOrNull().message)
         
         );
     }
@@ -77,7 +77,7 @@ public class TranzzoTest {
         checkCase(
                 Either.failure(TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson)),
                 (response, actual) -> {
-                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson, actual.error.message);
+                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson, actual.errorOrNull().message);
                 }
         
         );

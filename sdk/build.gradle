@@ -3,6 +3,13 @@ apply plugin: 'com.android.library'
 version '0.0.1'
 
 android {
+
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "tranzzo-sdk-${variant.name}-${version}.aar"
+        }
+    }
+
     compileSdkVersion 28
     testOptions {
         unitTests {

@@ -54,7 +54,7 @@ public class Either<E, T> {
      * @see #fold(Function, Function)
      * @see #consume(Consumer, Consumer)
      */
-    public T getOrNull() {
+    public T valueOrNull() {
         return this.value;
     }
     
