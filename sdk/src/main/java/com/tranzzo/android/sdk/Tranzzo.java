@@ -19,7 +19,7 @@ import java.util.TreeMap;
 @SuppressLint("SimpleDateFormat")
 public class Tranzzo {
     
-    static final String OOPS_MESSAGE_INTERNAL = "An error occurred within Tranzzo SDK. Send us exception log and we will try to do out best!";
+    private static final String OOPS_MESSAGE_INTERNAL = "An error occurred within Tranzzo SDK. Send us exception log and we will try to do out best!";
     static final String OOPS_MESSAGE_SERVER = "An error occurred within Tranzzo SDK. Send us this message and we will try to do out best: ";
     
     private final String apiToken;

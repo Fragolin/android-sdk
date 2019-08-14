@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.tranzzo.android.sdk.*;
+import com.tranzzo.android.sdk.extra.CardBrandLogo;
 import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.*;
 
@@ -93,7 +94,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         etCardNumber.setErrorColor(getResources().getColor(R.color.colorRed));
         etCardNumber.addCardBrandChangeListener(brand -> {
             tvBrand.setText(brand.toString());
-            imgBrand.setImageResource(brand.img);
+            imgBrand.setImageResource(CardBrandLogo.fromBrand(brand).img);
         });
         etCardNumber.addCardNumberCompleteListener(() -> Toast
                 .makeText(getApplicationContext(), "Card input completed", Toast.LENGTH_SHORT)

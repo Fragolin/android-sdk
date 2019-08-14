@@ -29,11 +29,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-
-            buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget.tranzzo.com\"")
         }
         debug {
-            buildConfigField("String", "TRANZZO_ENDPOINT", "\"https://widget-stg.tranzzo.com\"")
+
         }
     }
     compileOptions {
@@ -49,6 +47,7 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'com.google.android.material:material:1.0.0'
+    implementation project(':sdk')
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-core:2.25.0'
     testImplementation 'org.robolectric:robolectric:4.2'
