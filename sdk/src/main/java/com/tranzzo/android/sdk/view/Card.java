@@ -34,11 +34,10 @@ public class Card {
     final String cvc;
     
     @NonNull
-    @VisibleForTesting
     private final CardBrand brand;
     
     public Card(
-            @Size(max = 19) String number,
+            @Size(min = 16, max = 19) String number,
             @IntRange(from = 1, to = 12) int expMonth,
             @IntRange(to = 99) int expYear,
             @Size(min = 3, max = 4) String cvc) {
