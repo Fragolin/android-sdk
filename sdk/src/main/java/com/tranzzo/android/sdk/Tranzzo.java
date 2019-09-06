@@ -20,7 +20,7 @@ import java.util.TreeMap;
 public class Tranzzo {
     
     private static final String OOPS_MESSAGE_INTERNAL = "An error occurred within Tranzzo SDK. Send us exception log and we will try to do our best!";
-    static final String OOPS_MESSAGE_SERVER = "An error occurred within Tranzzo SDK. Send us this message and we will try to do ouк best: ";
+    static final String OOPS_MESSAGE_SERVER = "An error occurred within Tranzzo SDK. Send us this message and we will try to do our best: ";
     
     private final String apiToken;
     private final TranzzoApi api;
@@ -35,9 +35,14 @@ public class Tranzzo {
      */
     @NonNull
     public static Tranzzo init(String apiToken) {
+        return init(apiToken, BuildConfig.TRANZZO_ENDPOINT);
+    }
+    
+    @VisibleForTesting
+    static Tranzzo init(String apiToken, String endpoint) {
         return new Tranzzo(
                 apiToken,
-                new HttpTranzzoApi(BuildConfig.TRANZZO_ENDPOINT),
+                new HttpTranzzoApi(endpoint),
                 AndroidTelemetryProvider.INSTANCE,
                 AndroidLogAdapter.INSTANCE
         );
