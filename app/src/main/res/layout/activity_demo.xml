@@ -90,6 +90,14 @@
         android:orientation="horizontal">
 
 
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/swEnv"
+            android:text="Stage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2">
+        </androidx.appcompat.widget.SwitchCompat>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTokenize"
             android:layout_width="0dp"

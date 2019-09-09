@@ -4,13 +4,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
+
 import androidx.appcompat.app.AppCompatActivity;
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.appcompat.widget.SwitchCompat;
+
 import com.tranzzo.android.sdk.*;
 import com.tranzzo.android.sdk.extra.CardBrandLogo;
 import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TranzzoDemoActivity extends AppCompatActivity {
     
@@ -44,16 +50,28 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     @BindView(R.id.etExpiration)
     ExpiryDateEditText etExpiration;
     
+    @BindView(R.id.swEnv)
+    SwitchCompat swEnv;
+    
     @BindView(R.id.etCvc)
     CvcEditText etCvc;
     
     private TranzzoInputListener cardInputListener;
+    private AtomicBoolean isStage = new AtomicBoolean(true);
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
         ButterKnife.bind(this);
+        
+        swEnv.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isStage.set(!isChecked);
+            if (isChecked)
+                buttonView.setText("Prod");
+            else
+                buttonView.setText("Stage");
+        });
         
         btnTokenize.setOnClickListener(v -> {
             if (cardInputListener.isFormValid()) {
@@ -155,9 +173,15 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         
         @Override
         protected Either<TrzError, CardToken> doInBackground(Card... cards) {
-            return Tranzzo
-                    .init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK")
-                    .tokenize(cards[0], getApplicationContext());
+            return initTranzzo().tokenize(cards[0], getApplicationContext());
+        }
+        
+        private Tranzzo initTranzzo(){
+            if (isStage.get()){
+                return TranzzoTestBridge.init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK", BuildConfig.TRANZZO_STAGE);
+            } else {
+                return TranzzoTestBridge.init("Qlvd8Q31SkOBXWfXv9dgdpsYlRuTvMS/a12Dk55RG01d5ngjaxTDao8QOudvmBGu", BuildConfig.TRANZZO_PROD);
+            }
         }
         
         @Override

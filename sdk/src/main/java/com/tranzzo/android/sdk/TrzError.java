@@ -1,6 +1,7 @@
 package com.tranzzo.android.sdk;
 
 import androidx.annotation.NonNull;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -10,10 +11,16 @@ public class TrzError {
     
     public final String id;
     public final String message;
+    public final Throwable cause;
     
     public TrzError(@NonNull String id, @NonNull String message) {
+        this(id, message, null);
+    }
+    
+    public TrzError(@NonNull String id, @NonNull String message, Throwable cause) {
         this.id = id;
         this.message = message;
+        this.cause = cause;
     }
     
     /**
@@ -33,15 +40,24 @@ public class TrzError {
     static TrzError fromJson(String jsonString) {
         try {
             JSONObject json = new JSONObject(jsonString);
-            return new TrzError(json.getString("id"), json.getString("error_message"));
+            String errorMessage = json.getString("error_message");
+            
+            if (errorMessage != null){
+                return new TrzError(json.getString("id"), errorMessage);
+            } else {
+                return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString);
+            }
         } catch (JSONException e) {
-            e.printStackTrace();
-            return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString);
+            return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString, e);
         }
     }
     
     public static TrzError mkInternal(String message) {
-        return new TrzError(UUID.randomUUID().toString(), message);
+        return mkInternal(message, null);
+    }
+    
+    public static TrzError mkInternal(String message, Throwable cause) {
+        return new TrzError(UUID.randomUUID().toString(), message, cause);
     }
     
     @Override
@@ -52,13 +68,15 @@ public class TrzError {
         TrzError trzError = (TrzError) o;
         
         if (!id.equals(trzError.id)) return false;
-        return message.equals(trzError.message);
+        if (!message.equals(trzError.message)) return false;
+        return cause != null ? cause.equals(trzError.cause) : trzError.cause == null;
     }
     
     @Override
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + message.hashCode();
+        result = 31 * result + (cause != null ? cause.hashCode() : 0);
         return result;
     }
     
@@ -67,6 +85,9 @@ public class TrzError {
         final StringBuilder sb = new StringBuilder("TrzError{");
         sb.append("id='").append(id).append('\'');
         sb.append(", message='").append(message).append('\'');
+        if (cause != null){
+            sb.append(", cause='").append(cause).append('\'');
+        }
         sb.append('}');
         return sb.toString();
     }

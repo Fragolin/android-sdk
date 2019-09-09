@@ -26,7 +26,7 @@ public class Either<E, T> {
     }
     
     public static <T> Either<TrzError, T> wrap(Throwable ex) {
-        return failure(TrzError.mkInternal(ex.getMessage()));
+        return failure(TrzError.mkInternal(ex.getMessage(), ex));
     }
     
     public static <T> Either<TrzError, T> wrap(Callable<T> program) {
