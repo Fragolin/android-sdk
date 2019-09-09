@@ -6,7 +6,7 @@ android {
 
     libraryVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "tranzzo-sdk-${variant.name}-${version}.aar"
+            outputFileName = "tranzzo-sdk-extras-${variant.name}-${version}.aar"
         }
     }
 
