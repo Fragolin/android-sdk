@@ -2,6 +2,7 @@ package com.tranzzo.android.sdk;
 
 import com.tranzzo.android.sdk.util.Either;
 import com.tranzzo.android.sdk.view.Card;
+
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -16,9 +17,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
-public class TranzzoTest {
+public class TranzzoEncryptedTokenTest {
     
     private final String invalidJson = "{\"invalid\":\"json\"}";
+    
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     
@@ -33,14 +35,8 @@ public class TranzzoTest {
     private SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
     
     private String token = "IAMTOKEN";
-    private String exp = "2022-12-31T00:00:00";
-    private String cardMask = "424242******4242";
     
-    private String successJson = "{\n" +
-            "  \"card_mask\": \"" + cardMask + "\",\n" +
-            "  \"expires_at\": \"" + exp + "\",\n" +
-            "  \"token\": \"" + token + "\"\n" +
-            "}";
+    private String successJson = String.format("{\"token\": \"%s\"}", token);
     
     private Tranzzo underTest;
     
@@ -54,15 +50,12 @@ public class TranzzoTest {
     public void returnTokenForSuccessfulResponse() throws Exception {
         checkCase(
                 Either.success(successJson),
-                (response, actual) -> {
-                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.valueOrNull());
-                }
+                (response, actual) -> assertEquals(new CardToken(token), actual.valueOrNull())
         
         );
     }
     
     @Test
-    @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForEmptyResponseJson() throws Exception {
         checkCase(
                 Either.success(""),
@@ -72,12 +65,11 @@ public class TranzzoTest {
     }
     
     @Test
-    @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForInvalidResponseJson() throws Exception {
         checkCase(
-                Either.failure(TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson)),
+                Either.failure(TrzError.mkInternal(Tranzzo.oopsMessage("Failed to parse server response:", invalidJson))),
                 (response, actual) -> {
-                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson, actual.errorOrNull().message);
+                    assertEquals(Tranzzo.oopsMessage("Failed to parse server response:", invalidJson), actual.errorOrNull().message);
                 }
         
         );
@@ -85,10 +77,10 @@ public class TranzzoTest {
     
     private void checkCase(
             final Either<TrzError, String> serverResponse,
-            final ThrowableBiConsumer<Either<TrzError, String>, Either<TrzError, CardToken>> assertion
+            final ThrowableBiConsumer<Either<TrzError, String>, Either<TrzError, EncryptedToken>> assertion
     ) throws Exception {
         when(api.tokenize(requestParams, "")).thenReturn(serverResponse);
-        Either<TrzError, CardToken> actual = underTest.tokenize(validCard, RuntimeEnvironment.systemContext);
+        Either<TrzError, EncryptedToken> actual = underTest.tokenizeEncrypted(validCard, RuntimeEnvironment.systemContext);
         assertion.accept(serverResponse, actual);
     }
     

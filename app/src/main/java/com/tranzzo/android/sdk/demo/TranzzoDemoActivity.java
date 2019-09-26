@@ -1,5 +1,6 @@
 package com.tranzzo.android.sdk.demo;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,11 +54,15 @@ public class TranzzoDemoActivity extends AppCompatActivity {
     @BindView(R.id.swEnv)
     SwitchCompat swEnv;
     
+    @BindView(R.id.swRich)
+    SwitchCompat swRich;
+    
     @BindView(R.id.etCvc)
     CvcEditText etCvc;
     
     private TranzzoInputListener cardInputListener;
     private AtomicBoolean isStage = new AtomicBoolean(true);
+    private AtomicBoolean isRich = new AtomicBoolean(false);
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +78,24 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                 buttonView.setText("Stage");
         });
         
+        swRich.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isRich.set(isChecked);
+            if (isChecked)
+                buttonView.setText("Rich");
+            else
+                buttonView.setText("Default");
+        });
+        
         btnTokenize.setOnClickListener(v -> {
             if (cardInputListener.isFormValid()) {
                 collectCard().consume(
                         this::displayError,
-                        c -> new TokenizeTask().execute(c)
+                        c -> {
+                            if (isRich.get())
+                                new TokenizeRichTask().execute(c);
+                            else
+                                new TokenizeTask().execute(c);
+                        }
                 );
             } else {
                 displayError(TrzError.mkInternal("Something is invalid"));
@@ -169,6 +187,15 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         tvResult.setText(text);
     }
     
+    private Tranzzo initTranzzo(){
+        if (isStage.get()){
+            return TranzzoTestBridge.init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK", BuildConfig.TRANZZO_STAGE);
+        } else {
+            return TranzzoTestBridge.init("Qlvd8Q31SkOBXWfXv9dgdpsYlRuTvMS/a12Dk55RG01d5ngjaxTDao8QOudvmBGu", BuildConfig.TRANZZO_PROD);
+        }
+    }
+    
+    @SuppressLint("StaticFieldLeak")
     private class TokenizeTask extends AsyncTask<Card, Void, Either<TrzError, CardToken>> {
         
         @Override
@@ -176,16 +203,27 @@ public class TranzzoDemoActivity extends AppCompatActivity {
             return initTranzzo().tokenize(cards[0], getApplicationContext());
         }
         
-        private Tranzzo initTranzzo(){
-            if (isStage.get()){
-                return TranzzoTestBridge.init("m03z1jKTSO6zUYQN5C8xYZnIclK0plIQ/3YMgTZbV6g7kxle6ZnCaHVNv3A11UCK", BuildConfig.TRANZZO_STAGE);
-            } else {
-                return TranzzoTestBridge.init("Qlvd8Q31SkOBXWfXv9dgdpsYlRuTvMS/a12Dk55RG01d5ngjaxTDao8QOudvmBGu", BuildConfig.TRANZZO_PROD);
-            }
+        @Override
+        protected void onPostExecute(Either<TrzError, CardToken> result) {
+            result.consume(
+                    TranzzoDemoActivity.this::displayError,
+                    token -> {
+                        displayResult(token.toString());
+                        Log.i("TOKEN", ">>> " + token.toString());
+                    });
+        }
+    }
+    
+    @SuppressLint("StaticFieldLeak")
+    private class TokenizeRichTask extends AsyncTask<Card, Void, Either<TrzError, EncryptedToken>> {
+        
+        @Override
+        protected Either<TrzError, EncryptedToken> doInBackground(Card... cards) {
+            return initTranzzo().tokenizeEncrypted(cards[0], getApplicationContext());
         }
         
         @Override
-        protected void onPostExecute(Either<TrzError, CardToken> result) {
+        protected void onPostExecute(Either<TrzError, EncryptedToken> result) {
             result.consume(
                     TranzzoDemoActivity.this::displayError,
                     token -> {

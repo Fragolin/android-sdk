@@ -1,8 +1,10 @@
 package com.tranzzo.android.sdk;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.*;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import com.tranzzo.android.sdk.annotation.BetaApi;
 import com.tranzzo.android.sdk.annotation.InternalApi;
 import com.tranzzo.android.sdk.util.Either;
@@ -14,13 +16,20 @@ import java.util.TreeMap;
 /**
  * Entry point for Tranzzo SDK API.
  *
+ * @see #tokenizeEncrypted(Card, Context)
  * @see #tokenize(Card, Context)
  */
-@SuppressLint("SimpleDateFormat")
 public class Tranzzo {
     
     private static final String OOPS_MESSAGE_INTERNAL = "An error occurred within Tranzzo SDK. Send us exception log and we will try to do our best!";
-    static final String OOPS_MESSAGE_SERVER = "An error occurred within Tranzzo SDK. Send us this message and we will try to do our best: ";
+    
+    static String oopsMessage(String... args){
+        StringBuilder result = new StringBuilder("An error occurred within Tranzzo SDK. Send us this message and we will try to do our best:");
+        for (String arg : args) {
+            result.append(' ').append(arg);
+        }
+        return result.toString();
+    }
     
     private final String apiToken;
     private final TranzzoApi api;
@@ -75,28 +84,52 @@ public class Tranzzo {
     @BetaApi
     @NonNull
     public Either<TrzError, CardToken> tokenize(@NonNull final Card card, @NonNull final Context context) {
-        
-        Either<TrzError, CardToken> result = card.isValid() ? doTokenize(card, context) : invalidCard();
-        
-        return result.peekLeft(e -> {
-            log.error(OOPS_MESSAGE_INTERNAL);
-            log.error(e.toString());
-        });
-        
+        if (card.isValid()){
+            return doTokenize(prepareData(card, context, false))
+                    .flatMap(CardToken::fromJson);
+        } else {
+            return invalidCard();
+        }
+    }
+    
+    /**
+     * Performs PCI DSS compliant card tokenization on Tranzzo server with issue enrichment.
+     * Immediately returns an error for invalid card.
+     *
+     * @param card    card to tokenize
+     * @param context application context
+     * @return either successful {@link CardToken} result or {@link TrzError} inside {@link Either}
+     * @see Card#isValid()
+     * @see Either#isSuccessful()
+     */
+    @BetaApi
+    @NonNull
+    public Either<TrzError, EncryptedToken> tokenizeEncrypted(@NonNull final Card card, @NonNull final Context context) {
+        if (card.isValid()){
+            return doTokenize(prepareData(card, context, true))
+                    .flatMap(EncryptedToken::fromJson);
+        } else {
+            return invalidCard();
+        }
+    }
+    
+    private SortedMap<String, Object> prepareData(@NonNull final Card card, @NonNull final Context context, boolean rich) {
+        return new TreeMap<String, Object>(card.toMap()){{
+            putAll(telemetry.collect(context));
+            put("rich", rich);
+        }};
     }
     
     @NonNull
-    private Either<TrzError, CardToken> doTokenize(@NonNull final Card card, @NonNull final Context context) {
-        
-        SortedMap<String, Object> data = new TreeMap<>(card.toMap());
-        data.putAll(telemetry.collect(context));
-        
+    private Either<TrzError, String> doTokenize(@NonNull final SortedMap<String, Object> data) {
         return api
                 .tokenize(data, apiToken)
                 .peek(body -> log.trace("Response [success]: " + body))
                 .peekLeft(e -> log.trace("Response [failure]: " + e))
-                .flatMap(CardToken::fromJson);
-        
+                .peekLeft(e -> {
+                    log.error(OOPS_MESSAGE_INTERNAL);
+                    log.error(e.toString());
+                });
         
     }
     

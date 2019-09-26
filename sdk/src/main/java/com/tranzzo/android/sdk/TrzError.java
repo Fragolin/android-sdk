@@ -45,10 +45,10 @@ public class TrzError {
             if (errorMessage != null){
                 return new TrzError(json.getString("id"), errorMessage);
             } else {
-                return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString);
+                return TrzError.mkInternal(Tranzzo.oopsMessage("Failed to parse server response:", jsonString));
             }
         } catch (JSONException e) {
-            return TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + jsonString, e);
+            return TrzError.mkInternal(Tranzzo.oopsMessage("Failed to parse server response:", jsonString), e);
         }
     }
     
