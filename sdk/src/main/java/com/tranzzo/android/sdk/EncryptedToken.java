@@ -1,24 +1,26 @@
 package com.tranzzo.android.sdk;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
 import com.tranzzo.android.sdk.util.Either;
 
 import org.json.JSONObject;
 
-public class CardToken {
+public class EncryptedToken {
     
-    private final String token;
+    @NonNull
+    private final String data;
     
     @VisibleForTesting
-    CardToken(String token) {
-        this.token = token;
+    EncryptedToken(@NonNull String data) {
+        this.data = data;
     }
     
-    static Either<TrzError, CardToken> fromJson(String successJson) {
+    static Either<TrzError, EncryptedToken> fromJson(String successJson) {
         return Either.wrap(() -> {
             JSONObject json = new JSONObject(successJson);
-            return new CardToken(json.getString("token"));
+            return new EncryptedToken(json.getString("data"));
         });
     }
     
@@ -27,18 +29,20 @@ public class CardToken {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         
-        CardToken cardToken = (CardToken) o;
-        
-        return token.equals(cardToken.token);
+        EncryptedToken that = (EncryptedToken) o;
+    
+        return data.equals(that.data);
     }
     
     @Override
     public int hashCode() {
-        return token.hashCode();
+        return data.hashCode();
     }
     
     @Override
+    @NonNull
     public String toString() {
-        return "CardToken{token='" + token + "'}";
+        return "EncryptedToken{data='" + data + "'}";
     }
+    
 }

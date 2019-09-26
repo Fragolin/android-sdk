@@ -16,9 +16,10 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
-public class TranzzoTest {
+public class TranzzoTokenTest {
     
     private final String invalidJson = "{\"invalid\":\"json\"}";
+    
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     
@@ -30,17 +31,13 @@ public class TranzzoTest {
     
     private Card validCard = new Card("4242424242424242", 12, 22, "000");
     
-    private SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
+    private SortedMap<String, Object> requestParams = new TreeMap<String, Object>(validCard.toMap()){{
+        put("rich", false);
+    }};
     
     private String token = "IAMTOKEN";
-    private String exp = "2022-12-31T00:00:00";
-    private String cardMask = "424242******4242";
     
-    private String successJson = "{\n" +
-            "  \"card_mask\": \"" + cardMask + "\",\n" +
-            "  \"expires_at\": \"" + exp + "\",\n" +
-            "  \"token\": \"" + token + "\"\n" +
-            "}";
+    private String successJson = String.format("{\"token\": \"%s\"}", token);
     
     private Tranzzo underTest;
     
@@ -54,15 +51,12 @@ public class TranzzoTest {
     public void returnTokenForSuccessfulResponse() throws Exception {
         checkCase(
                 Either.success(successJson),
-                (response, actual) -> {
-                    assertEquals(new CardToken(token, CardToken.DATE_TIME_PARSER.parse(exp), cardMask), actual.valueOrNull());
-                }
+                (response, actual) -> assertEquals(new CardToken(token), actual.valueOrNull())
         
         );
     }
     
     @Test
-    @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForEmptyResponseJson() throws Exception {
         checkCase(
                 Either.success(""),
@@ -72,12 +66,11 @@ public class TranzzoTest {
     }
     
     @Test
-    @SuppressWarnings("ConstantConditions")
     public void returnAnErrorForInvalidResponseJson() throws Exception {
         checkCase(
-                Either.failure(TrzError.mkInternal(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson)),
+                Either.failure(TrzError.mkInternal(Tranzzo.oopsMessage("Failed to parse server response:", invalidJson))),
                 (response, actual) -> {
-                    assertEquals(Tranzzo.OOPS_MESSAGE_SERVER + "Failed to parse server response: " + invalidJson, actual.errorOrNull().message);
+                    assertEquals(Tranzzo.oopsMessage("Failed to parse server response:", invalidJson), actual.errorOrNull().message);
                 }
         
         );
