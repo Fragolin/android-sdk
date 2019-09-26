@@ -32,11 +32,13 @@ public class TranzzoEncryptedTokenTest {
     
     private Card validCard = new Card("4242424242424242", 12, 22, "000");
     
-    private SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
+    private SortedMap<String, Object> requestParams = new TreeMap<String, Object>(validCard.toMap()){{
+        put("rich", true);
+    }};
     
-    private String token = "IAMTOKEN";
+    private String data = "iam==:encrypteddata";
     
-    private String successJson = String.format("{\"token\": \"%s\"}", token);
+    private String successJson = String.format("{\"data\": \"%s\"}", data);
     
     private Tranzzo underTest;
     
@@ -50,7 +52,7 @@ public class TranzzoEncryptedTokenTest {
     public void returnTokenForSuccessfulResponse() throws Exception {
         checkCase(
                 Either.success(successJson),
-                (response, actual) -> assertEquals(new CardToken(token), actual.valueOrNull())
+                (response, actual) -> assertEquals(new EncryptedToken(data), actual.valueOrNull())
         
         );
     }

@@ -31,7 +31,9 @@ public class TranzzoTokenTest {
     
     private Card validCard = new Card("4242424242424242", 12, 22, "000");
     
-    private SortedMap<String, Object> requestParams = new TreeMap<>(validCard.toMap());
+    private SortedMap<String, Object> requestParams = new TreeMap<String, Object>(validCard.toMap()){{
+        put("rich", false);
+    }};
     
     private String token = "IAMTOKEN";
     

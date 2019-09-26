@@ -1,7 +1,5 @@
 package com.tranzzo.android.sdk;
 
-import android.annotation.SuppressLint;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
