@@ -1,7 +1,6 @@
 package com.tranzzo.android.sdk;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
 
 import com.tranzzo.android.sdk.util.Either;
 
@@ -10,9 +9,8 @@ import org.json.JSONObject;
 public class EncryptedToken {
     
     @NonNull
-    private final String data;
+    public final String data;
     
-    @VisibleForTesting
     EncryptedToken(@NonNull String data) {
         this.data = data;
     }

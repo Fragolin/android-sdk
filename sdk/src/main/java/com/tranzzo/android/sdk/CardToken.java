@@ -1,6 +1,6 @@
 package com.tranzzo.android.sdk;
 
-import androidx.annotation.VisibleForTesting;
+import androidx.annotation.NonNull;
 
 import com.tranzzo.android.sdk.util.Either;
 
@@ -8,10 +8,10 @@ import org.json.JSONObject;
 
 public class CardToken {
     
-    private final String token;
+    @NonNull
+    public final String token;
     
-    @VisibleForTesting
-    CardToken(String token) {
+    CardToken(@NonNull String token) {
         this.token = token;
     }
     
