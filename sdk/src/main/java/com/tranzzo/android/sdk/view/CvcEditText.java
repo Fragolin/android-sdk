@@ -76,7 +76,7 @@ public class CvcEditText extends TranzzoEditText {
     }
     
     private void setupView(){
-        setInputType(InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
     }
     
     private void listenForTextChanges() {
