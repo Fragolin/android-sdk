@@ -102,7 +102,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
             }
         });
         btnTokenize.setEnabled(false);
-        
+
         btnFillInDefault.setOnClickListener(v -> {
             etCardNumber.setText("4242424242424242");
             etExpiration.setText("12/22");
@@ -151,7 +151,7 @@ public class TranzzoDemoActivity extends AppCompatActivity {
                 etCvc,
                 () -> btnTokenize.setEnabled(true)
         );
-        
+
         btnCheckFormValid.setOnClickListener(v -> {
             if (cardInputListener.isFormValid()) {
                 displayResult("VALID");

@@ -1,1 +1,1 @@
-include ':app', ':sdk', ':sdk_extras'
+include ':simple', ':sdk', ':sdk_extras'

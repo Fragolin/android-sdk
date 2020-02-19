@@ -22,7 +22,7 @@ public class ExpiryFields {
         if (o == null || getClass() != o.getClass()) return false;
         
         ExpiryFields that = (ExpiryFields) o;
-        
+
         if (expMonth != that.expMonth) return false;
         return expYear == that.expYear;
     }
