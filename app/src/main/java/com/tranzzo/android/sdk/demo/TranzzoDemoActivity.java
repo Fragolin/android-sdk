@@ -69,7 +69,6 @@ public class TranzzoDemoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
         ButterKnife.bind(this);
-        
         swEnv.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isStage.set(!isChecked);
             if (isChecked)

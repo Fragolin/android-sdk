@@ -114,11 +114,11 @@ public class TranzzoEditText extends TextInputEditText {
         mDeleteEmptyListener = deleteEmptyListener;
     }
     
-    void setErrorMessageListener(@Nullable ErrorMessageListener errorMessageListener) {
+    public void setErrorMessageListener(@Nullable ErrorMessageListener errorMessageListener) {
         mErrorMessageListener = errorMessageListener;
     }
     
-    void setErrorMessage(@Nullable String errorMessage) {
+    public void setErrorMessage(@Nullable String errorMessage) {
         mErrorMessage = errorMessage;
     }
     
