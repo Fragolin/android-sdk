@@ -42,5 +42,12 @@ public class ExpiryFields {
         sb.append('}');
         return sb.toString();
     }
-    
+
+    public int getExpMonth() {
+        return expMonth;
+    }
+
+    public int getExpYear() {
+        return expYear;
+    }
 }
